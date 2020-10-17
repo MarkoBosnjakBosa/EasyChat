@@ -92,11 +92,11 @@ module.exports = function(app, bcryptjs, mongoose, models, transporter, emailUse
       "<body>" +
       "<p>Dear <b>" + firstName + "</b>,</p>" +
       "<p>thank you for using EasyChat. Click on the button below to proceed with your registration:" +
-      "<p style='margin-bottom: 30px;'><a href='" + baseUrl + post + "/confirm/registration/" + username + "' target='_blank' style=' background-color: #1a1aff; border: none; color: #fff; padding: 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius:5px;'>Confirm registration</a></p>" +
+      "<p style='margin-bottom: 30px;'><a href='" + baseUrl + port + "/confirm/registration/" + username + "' target='_blank' style=' background-color: #1a1aff; border: none; color: #fff; padding: 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius:5px;'>Confirm registration</a></p>" +
       "<p>Kind regards,<br/> your Admin Team</p>" +
       "</body>" +
     "</html>"};
-    transporter.sendMail(mailOptions).then(test => console.log(1)).catch(error => console.log(error));
+    transporter.sendMail(mailOptions).then().catch(error => console.log(error));
  }
  function invalidEmail(email) {
    var emailFormat = /\S+@\S+\.\S+/;

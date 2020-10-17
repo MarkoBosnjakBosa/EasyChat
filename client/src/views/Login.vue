@@ -50,7 +50,7 @@
     },
     methods: {
       resetPassword() {
-        this.$router.push({name: "ResetPassword"});
+        this.$router.push({name: "ForgotPassword"});
       },
       register() {
         this.$router.push({name: "Registration"});
