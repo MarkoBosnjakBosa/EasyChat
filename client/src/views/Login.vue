@@ -16,7 +16,7 @@
         <small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
       </div>
       <div class="form-group forgotPasswordDiv">
-        <a href="#" @click.prevent="resetPassword">Forgot password?</a>
+        <a href="#" @click.prevent="forgotPassword">Forgot password?</a>
       </div>
       <div v-if="passwordMatch" class="loginFailed">Password does not match!</div>
       <div class="form-group submitDiv">
@@ -49,7 +49,7 @@
       }
     },
     methods: {
-      resetPassword() {
+      forgotPassword() {
         this.$router.push({name: "ForgotPassword"});
       },
       register() {

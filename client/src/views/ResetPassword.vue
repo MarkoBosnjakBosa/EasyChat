@@ -97,7 +97,7 @@
         }
       }
     },
-    mounted() {
+    created() {
       this.user.username = this.$route.params.username;
     }
   }

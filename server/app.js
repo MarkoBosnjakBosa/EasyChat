@@ -25,6 +25,7 @@ app.set("view engine", "html");
 const registration = require("./routes/registration.js")(app, bcryptjs, mongoose, models, transporter, emailUser, bodyParser, baseUrl, port, loginUrl);
 const login = require("./routes/login.js")(app, bcryptjs, mongoose, models, bodyParser);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, mongoose, models, transporter, emailUser, bodyParser, resetPasswordUrl);
+const adminChatroom = require("./routes/admin/chatroom.js")(app, mongoose, models, bodyParser);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;

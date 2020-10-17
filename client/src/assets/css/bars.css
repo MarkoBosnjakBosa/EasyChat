@@ -15,12 +15,22 @@
 }
 #sidebarDiv .list {
     width: 15rem;
+    padding-left: 0px;
 }
 #pageDiv {
     min-width: 100vw;
 }
 #barsDiv.toggled #sidebarDiv {
     margin-left: 0;
+}
+.chatroomType {
+    width: 90%;
+    float: left;
+}
+.chatroomIcon {
+    width: 10%;
+    float: left;
+    margin-left: 10px;
 }
 @media (min-width: 768px) {
     #sidebarDiv {
