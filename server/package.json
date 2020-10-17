@@ -1,0 +1,26 @@
+{
+  "name": "easychat",
+  "version": "1.0.0",
+  "description": "Application for real-time chatting",
+  "main": "app.js",
+  "scripts": {
+    "watch": "nodemon ./app.js"
+  },
+  "author": "Marko Bosnjak",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.8",
+    "nodemailer": "^6.4.13",
+    "redis": "^3.0.2",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

@@ -1,0 +1,36 @@
+#barsDiv {
+    overflow-x: hidden;
+}
+#sidebarDiv {
+    min-height: 100vh;
+    margin-left: -15rem;
+    -webkit-transition: margin .25s ease-out;
+    -moz-transition: margin .25s ease-out;
+    -o-transition: margin .25s ease-out;
+    transition: margin .25s ease-out;
+}
+#sidebarDiv .heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+#sidebarDiv .list {
+    width: 15rem;
+}
+#pageDiv {
+    min-width: 100vw;
+}
+#barsDiv.toggled #sidebarDiv {
+    margin-left: 0;
+}
+@media (min-width: 768px) {
+    #sidebarDiv {
+        margin-left: 0;
+    }
+    #pageDiv {
+        min-width: 0;
+        width: 100%;
+    }
+    #barsDiv.toggled #sidebarDiv {
+        margin-left: -15rem;
+    }
+}
