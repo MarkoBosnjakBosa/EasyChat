@@ -4,9 +4,9 @@
             <div class="bg-light border-right" id="sidebarDiv">
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-down" @click="toggleChatrooms('public')"></i></li>
+                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
                 <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-down" @click="toggleChatrooms('private')"></i></li>
+                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
                 <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="chatroomIcon"><i :class="privateChatroom.icon"></i></div>{{privateChatroom.name}}</li>
             </ul>
             </div>
@@ -217,13 +217,12 @@
                     publicChatrooms.forEach(publicChatroom => {
                         if(publicChatroom.classList.contains("hiddenPublicChatroom")) {
                             publicChatroom.classList.remove("hiddenPublicChatroom");
-                            publicIcon.classList.remove("fa-angle-double-up");
-                            publicIcon.classList.add("fa-angle-double-down");
-                        } else {
-                            publicChatroom.classList.add("hiddenPublicChatroom");
-                            publicIcon.setAttribute("data-toggled", true);
                             publicIcon.classList.remove("fa-angle-double-down");
                             publicIcon.classList.add("fa-angle-double-up");
+                        } else {
+                            publicChatroom.classList.add("hiddenPublicChatroom");
+                            publicIcon.classList.remove("fa-angle-double-up");
+                            publicIcon.classList.add("fa-angle-double-down");
                         }
                     });
                 } else {
@@ -232,12 +231,12 @@
                     privateChatrooms.forEach(privateChatroom => {
                         if(privateChatroom.classList.contains("hiddenPrivateChatroom")) {
                             privateChatroom.classList.remove("hiddenPrivateChatroom");
-                            privateIcon.classList.remove("fa-angle-double-up");
-                            privateIcon.classList.add("fa-angle-double-down");
-                        } else {
-                            privateChatroom.classList.add("hiddenPrivateChatroom");
                             privateIcon.classList.remove("fa-angle-double-down");
                             privateIcon.classList.add("fa-angle-double-up");
+                        } else {
+                            privateChatroom.classList.add("hiddenPrivateChatroom");
+                            privateIcon.classList.remove("fa-angle-double-up");
+                            privateIcon.classList.add("fa-angle-double-down");
                         }
                     });
                 }
