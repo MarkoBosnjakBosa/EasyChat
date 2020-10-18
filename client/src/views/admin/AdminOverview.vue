@@ -4,10 +4,10 @@
             <div class="bg-light border-right" id="sidebarDiv">
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Channels</div><i class="fas fa-angle-double-down"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i class="fas fa-angle-double-down"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light"><div class="chatroomIcon"><i :class="privateChatroom.icon"></i></div>{{privateChatroom.name}}</li>
+                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-down" @click="toggleChatrooms('public')"></i></li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
+                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-down" @click="toggleChatrooms('private')"></i></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="chatroomIcon"><i :class="privateChatroom.icon"></i></div>{{privateChatroom.name}}</li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -76,13 +76,13 @@
                             <td v-else><i :class="publicChatroom.icon"></i></td>
                             <td v-if="editing == publicChatroom._id" class="padded">
                                 <ul>
-                                    <li v-for="participant in publicChatroom.participants" :key="participant">{{participant}}<i class="fas fa-ban blockUser" @click="blockUser(participant)"></i></li>
+                                    <li v-for="participant in publicChatroom.participants" :key="participant">{{participant}}<i class="fas fa-ban blockUser" @click="blockParticipant(publicChatroom._id, participant)"></i></li>
                                 </ul>
                             </td>
                             <td v-else>{{publicChatroom.participants.join(", ")}}</td>
                             <td v-if="editing == publicChatroom._id" class="padded">
                                 <ul>
-                                    <li v-for="blockedParticipant in publicChatroom.blockedParticipants" :key="blockedParticipant">{{blockedParticipant}}<i class="fas fa-check allowUser" @click="allowUser(participant)"></i></li>
+                                    <li v-for="blockedParticipant in publicChatroom.blockedParticipants" :key="blockedParticipant">{{blockedParticipant}}<i class="fas fa-check allowUser" @click="allowParticipant(publicChatroom._id, blockedParticipant)"></i></li>
                                 </ul>
                             </td>
                             <td v-else>{{publicChatroom.blockedParticipants.join(", ")}}</td>
@@ -183,10 +183,64 @@
             },
             deleteChatroom(chatroomId) {
                 axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deleteChatroom/" + chatroomId).then(response => {
-                if(response.data.deleted) {
-                    this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != chatroomId);
-                }
+                    if(response.data.deleted) {
+                        this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != chatroomId);
+                    }
                 }).catch(error => console.log(error));
+            },
+            blockParticipant(chatroomId, participant) {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/blockParticipant", {
+                    _id: chatroomId,
+                    participant: participant
+                }).then(response => {
+                    if(response.data.blocked) {
+                        var updatedChatroom = response.data.chatroom;
+                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                    }
+                }).catch(error => console.log(error));
+            },
+            allowParticipant(chatroomId, participant) {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/allowParticipant", {
+                    _id: chatroomId,
+                    participant: participant
+                }).then(response => {
+                    if(response.data.allowed) {
+                        var updatedChatroom = response.data.chatroom;
+                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                    }
+                }).catch(error => console.log(error));
+            },
+            toggleChatrooms(type) {
+                if(type == "public") {
+                    var publicChatrooms = document.querySelectorAll(".publicChatroom");
+                    var publicIcon = document.getElementById("publicIcon");
+                    publicChatrooms.forEach(publicChatroom => {
+                        if(publicChatroom.classList.contains("hiddenPublicChatroom")) {
+                            publicChatroom.classList.remove("hiddenPublicChatroom");
+                            publicIcon.classList.remove("fa-angle-double-up");
+                            publicIcon.classList.add("fa-angle-double-down");
+                        } else {
+                            publicChatroom.classList.add("hiddenPublicChatroom");
+                            publicIcon.setAttribute("data-toggled", true);
+                            publicIcon.classList.remove("fa-angle-double-down");
+                            publicIcon.classList.add("fa-angle-double-up");
+                        }
+                    });
+                } else {
+                    var privateChatrooms = document.querySelector(".privateChatroom");
+                    var privateIcon = document.getElementById("publicIcon");
+                    privateChatrooms.forEach(privateChatroom => {
+                        if(privateChatroom.classList.contains("hiddenPrivateChatroom")) {
+                            privateChatroom.classList.remove("hiddenPrivateChatroom");
+                            privateIcon.classList.remove("fa-angle-double-up");
+                            privateIcon.classList.add("fa-angle-double-down");
+                        } else {
+                            privateChatroom.classList.add("hiddenPrivateChatroom");
+                            privateIcon.classList.remove("fa-angle-double-down");
+                            privateIcon.classList.add("fa-angle-double-up");
+                        }
+                    });
+                }
             },
             toggleSidebar() {
                 var bars = document.getElementById("barsDiv");
@@ -216,6 +270,11 @@
     #chatroom {
         margin: 0 auto;
         max-width: 800px;
+    }
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     tbody .fas, tbody .far {
         cursor: pointer;

@@ -26,11 +26,18 @@
 .chatroomType {
     width: 90%;
     float: left;
+    font-weight: bold;
 }
 .chatroomIcon {
     width: 10%;
     float: left;
     margin-left: 10px;
+}
+.fas.fa-angle-double-up, .fas.fa-angle-double-down {
+    cursor: pointer;
+}
+.hiddenPublicChatroom, .hiddenPrivateChatroom {
+    display: none;
 }
 @media (min-width: 768px) {
     #sidebarDiv {

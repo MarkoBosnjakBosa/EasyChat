@@ -4,7 +4,7 @@ module.exports = function(app, mongoose, models, bodyParser) {
         Chatroom.find({}).then(chatrooms => {
             var public = [];
             var private = [];
-            chatrooms.forEach(function(chatroom) {
+            chatrooms.forEach(chatroom => {
                 if(chatroom.type == "public") {
                     public.push(chatroom);
                 }
@@ -80,6 +80,46 @@ module.exports = function(app, mongoose, models, bodyParser) {
             }).catch(error => console.log(error));
         } else {
             response.status(200).json({deleted: false});
+            response.end();
+        }
+    });
+    app.put("/blockParticipant", (request, response) => {
+        var _id = request.body._id;
+        var participant = request.body.participant;
+        if(_id && participant) {
+            var query = {_id: _id};
+            var update = {$pull: {participants: participant}, $push: {blockedParticipants: participant}};
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
+                if(!isEmpty(chatroom)) {
+                    response.status(200).json({blocked: true, chatroom: chatroom});
+                    response.end();
+                } else {
+                    response.status(200).json({blocked: false});
+                    response.end(); 
+                }
+            });
+        } else {
+            response.status(200).json({blocked: false});
+            response.end();
+        }
+    });
+    app.put("/allowParticipant", (request, response) => {
+        var _id = request.body._id;
+        var participant = request.body.participant;
+        if(_id && participant) {
+            var query = {_id: _id};
+            var update = {$push: {participants: participant}, $pull: {blockedParticipants: participant}};
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
+                if(!isEmpty(chatroom)) {
+                    response.status(200).json({allowed: true, chatroom: chatroom});
+                    response.end();
+                } else {
+                    response.status(200).json({allowed: false});
+                    response.end(); 
+                }
+            });
+        } else {
+            response.status(200).json({allowed: false});
             response.end();
         }
     });
