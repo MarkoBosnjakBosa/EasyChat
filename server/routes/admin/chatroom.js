@@ -35,11 +35,51 @@ module.exports = function(app, mongoose, models, bodyParser) {
             var blockedParticipants = [];
             var newChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
             newChatroom.save().then(chatroom => {
-                response.status(200).json({created: true});
+                response.status(200).json({created: true, chatroom: chatroom});
                 response.end();
             }).catch(error => console.log(error));
         } else {
             response.status(200).json({created: false, errorFields: errorFields});
+            response.end();
+        }
+    });
+    app.put("/editChatroom", (request, response) => {
+        var _id = request.body._id;
+        var name = request.body.name;
+        var icon = request.body.icon;
+        if(_id && name && icon) {
+            var query = {_id: _id};
+            var update = {name: name, icon: icon};
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
+                if(!isEmpty(chatroom)) {
+                    response.status(200).json({edited: true});
+                    response.end();
+                }
+                else {
+                    response.status(200).json({edited: false});
+                    response.end();
+                }
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({edited: false});
+            response.end();
+        }
+    });
+    app.delete("/deleteChatroom/:chatroomId", (request, response) => {
+        var _id = request.params.chatroomId;
+        if(_id) {
+            var query = {_id: _id};
+            Chatroom.findOneAndRemove(query).then(chatroom => {
+            if(!isEmpty(chatroom)) {
+                response.status(200).json({deleted: true});
+                response.end();
+            } else {
+                response.status(200).json({deleted: false});
+                response.end();
+            }
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({deleted: false});
             response.end();
         }
     });

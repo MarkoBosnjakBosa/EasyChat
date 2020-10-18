@@ -56,6 +56,47 @@
                         <div v-if="chatroomCreated" class="creationSuccessful">Chatroom has been successfully created!</div>
                     </form>
                 </div>
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Icon</th>
+                            <th scope="col">Participants</th>
+                            <th scope="col">Blocked</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(publicChatroom, index) in publicChatrooms" :key="publicChatroom._id">
+                            <th scope="row">{{++index}}</th>
+                            <td v-if="editing == publicChatroom._id"><input type="text" class="form-control" v-model="publicChatroom.name"/></td>
+                            <td v-else>{{publicChatroom.name}}</td>
+                            <td v-if="editing == publicChatroom._id"><input type="text" class="form-control" v-model="publicChatroom.icon"/></td>
+                            <td v-else><i :class="publicChatroom.icon"></i></td>
+                            <td v-if="editing == publicChatroom._id" class="padded">
+                                <ul>
+                                    <li v-for="participant in publicChatroom.participants" :key="participant">{{participant}}<i class="fas fa-ban blockUser" @click="blockUser(participant)"></i></li>
+                                </ul>
+                            </td>
+                            <td v-else>{{publicChatroom.participants.join(", ")}}</td>
+                            <td v-if="editing == publicChatroom._id" class="padded">
+                                <ul>
+                                    <li v-for="blockedParticipant in publicChatroom.blockedParticipants" :key="blockedParticipant">{{blockedParticipant}}<i class="fas fa-check allowUser" @click="allowUser(participant)"></i></li>
+                                </ul>
+                            </td>
+                            <td v-else>{{publicChatroom.blockedParticipants.join(", ")}}</td>
+                            <td v-if="editing == publicChatroom._id" class="padded">
+                                <i class="far fa-check-circle" @click="editChatroom(publicChatroom)"></i>
+                                <i class="far fa-times-circle" @click="disableEditing()"></i>
+                            </td>
+                            <td v-else>
+                                <i class="fas fa-pencil-alt" @click="enableEditing(publicChatroom._id)"></i>
+                                <i class="fas fa-trash" @click="deleteChatroom(publicChatroom._id)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -80,7 +121,8 @@
                     name: "",
                     icon: ""
                 },
-                chatroomCreated: false
+                chatroomCreated: false,
+                editing: null
             }
         },
         methods: {
@@ -106,6 +148,8 @@
                     icon: this.chatroom.icon
                 }).then(response => {
                     if(response.data.created) {
+                        var newChatroom = response.data.chatroom;
+                        this.publicChatrooms = [...this.publicChatrooms, newChatroom];
                         this.chatroomCreated = true;
                         this.$refs.first.focus();
                         this.chatroom = {name: "", icon: ""};
@@ -119,6 +163,31 @@
             },
             clearNameStatus() { this.nameError = false; },
             clearIconStatus() { this.iconError = false; },
+            enableEditing(id) { this.editing = id; },
+            disableEditing() { this.editing = null; },
+            editChatroom(updatedChatroom) {
+                if(updatedChatroom.name != "" && updatedChatroom.icon != "") {
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editChatroom", {
+                        _id: updatedChatroom._id,
+                        name: updatedChatroom.name,
+                        icon: updatedChatroom.icon
+                    }).then(response => {
+                        if(response.data.edited) {
+                            this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                            this.editing = null;
+                        }
+                    }).catch(error => console.log(error));
+                } else {
+                    return;
+                }
+            },
+            deleteChatroom(chatroomId) {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deleteChatroom/" + chatroomId).then(response => {
+                if(response.data.deleted) {
+                    this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != chatroomId);
+                }
+                }).catch(error => console.log(error));
+            },
             toggleSidebar() {
                 var bars = document.getElementById("barsDiv");
                 var toggleSidebar = document.getElementById("toggleSidebar");
@@ -147,6 +216,25 @@
     #chatroom {
         margin: 0 auto;
         max-width: 800px;
+    }
+    tbody .fas, tbody .far {
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    .padded {
+        padding-top: 20px;
+    }
+    td ul{
+        list-style-type: none;
+        padding-left: 0px;
+    }
+    .allowUser {
+        margin-left: 5px;
+        color: #008000;
+    }
+    .blockUser {
+        margin-left: 5px;
+        color: #ff0000;
     }
     .creationSuccessful {
         color: #008000;
