@@ -2,7 +2,8 @@ module.exports = function(app, models) {
     const User = models.User;
     const Chatroom = models.Chatroom;
     app.get("/getChatrooms", (request, response) => {
-        Chatroom.find({}).then(chatrooms => {
+        var query = {};
+        Chatroom.find(query).then(chatrooms => {
             var public = [];
             var private = [];
             chatrooms.forEach(chatroom => {
@@ -163,6 +164,13 @@ module.exports = function(app, models) {
             response.status(200).json({deleted: false});
             response.end();
         }
+    });
+    app.get("/getUsers", (request, response) => {
+        var query = {};
+        User.find(query).then(users => {
+            response.status(200).json({users: users});
+            response.end();
+        });
     });
 
     function getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants) {

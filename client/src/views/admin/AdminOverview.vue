@@ -99,16 +99,15 @@
                     <form autocomplete="off" @submit.prevent="createPrivateChatroom">
                         <h1>Private message</h1>
                         <div class="form-row">
+                            <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
                                 <select id="user" class="form-control" :class="{'errorField' : userError && privateSubmitting}" v-model="user" @focus="clearUserStatus" @keypress="clearUserStatus">
                                     <option value="" disabled selected>Select user...</option>
-                                    <option value="top">Top</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="low">Low</option>
+                                    <option v-for="user in users" :key="user._id" :value="user._id">{{user.username}}</option>
                                 </select>
                                 <small v-if="userError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
@@ -132,6 +131,7 @@
                 username: "",
                 publicChatrooms: [],
                 privateChatrooms: [],
+                users: [],
                 publicSubmitting: false,
                 nameError: false,
                 iconError: false,
@@ -157,6 +157,11 @@
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms").then(response => {
                     this.publicChatrooms = response.data.public;
                     this.privateChatrooms = response.data.private;
+                }).catch(error => console.log(error));
+            },
+            getUsers() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getUsers").then(response => {
+                    this.users = response.data.users;
                 }).catch(error => console.log(error));
             },
             createPublicChatroom() {
@@ -195,6 +200,7 @@
             },
             clearNameStatus() { this.nameError = false; },
             clearIconStatus() { this.iconError = false; },
+            clearUserStatus() { this.userError = false; },
             enableEditing(id) { this.editing = id; },
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
@@ -291,6 +297,7 @@
         created() {
             this.isLoggedIn();
             this.getChatrooms();
+            this.getUsers();
         }
     }
 </script>
