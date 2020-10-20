@@ -26,12 +26,12 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    username
+                                    {{username}}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
                                     <a class="dropdown-item" href="#">Profile</a>
                                     <a class="dropdown-item" href="#">Change password</a>
-                                    <a class="dropdown-item" href="#">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
                             </li>
                         </ul>
@@ -53,7 +53,7 @@
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
-                        <div v-if="chatroomCreated" class="creationSuccessful">Chatroom has been successfully created!</div>
+                        <div v-if="publicChatroomCreated" class="creationSuccessful">Chatroom has been successfully created!</div>
                     </form>
                 </div>
                 <table class="table">
@@ -108,7 +108,7 @@
                                     <option value="medium">Medium</option>
                                     <option value="low">Low</option>
                                 </select>
-                                <small v-if="priorityError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
+                                <small v-if="userError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
                             </div>
                             <div class="form-group col-md-4">
                                 <button type="submit" class="btn btn-primary">Create</button>
@@ -131,6 +131,7 @@
         name: "adminOverview",
         data() {
             return {
+                username: "",
                 publicChatrooms: [],
                 privateChatrooms: [],
                 publicSubmitting: false,
@@ -149,6 +150,11 @@
             }
         },
         methods: {
+            isLoggedIn() {
+                if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
+                this.username = this.$store.getters.getUser.username;
+                this.checkStatus();
+            },
             getChatrooms() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms").then(response => {
                     this.publicChatrooms = response.data.public;
@@ -231,6 +237,13 @@
                     }
                 }).catch(error => console.log(error));
             },
+            checkStatus() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
+            },
+            logout() {
+                this.$store.dispatch("logout");
+                this.$router.push("/login");
+            },
             toggleChatrooms(type) {
                 if(type == "public") {
                     var publicChatrooms = document.querySelectorAll(".publicChatroom");
@@ -278,6 +291,7 @@
             invalidIcon() { return this.publicChatroom.icon === ""; }
         },
         created() {
+            this.isLoggedIn();
             this.getChatrooms();
         }
     }

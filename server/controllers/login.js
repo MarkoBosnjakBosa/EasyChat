@@ -1,9 +1,9 @@
-module.exports = function(app, bcryptjs, models) {
+module.exports = function(app, jwt, bcryptjs, models) {
   	const User = models.User;
-  	app.post("/checkLogin", (request, response) => {
-   		var login = request.body.login;
-   		if(login) {
-			var query = {$or: [{username: login}, {email: login}]};
+  	app.post("/checkUsername", (request, response) => {
+   		var username = request.body.username;
+   		if(username) {
+			var query = {username: username};
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
 					response.status(200).json({exists: true});
@@ -21,9 +21,9 @@ module.exports = function(app, bcryptjs, models) {
  	app.post("/login", (request, response) => {
 		var allowLogin = true;
 		var errorFields = [];
-		var login = request.body.login;
-		if(!login) {
-			errorFields.push("login");
+		var username = request.body.username;
+		if(!username) {
+			errorFields.push("username");
 			allowLogin = false;
 		}
 		var password = request.body.password;
@@ -32,13 +32,13 @@ module.exports = function(app, bcryptjs, models) {
 			allowLogin = false;
 		}
 		if(allowLogin) {
-			var query = {$or: [{username: login}, {email: login}]};
+			var query = {username: username};
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
-					request.session.username = user.username;
 					bcryptjs.compare(password, user.password, function(error, foundPassword) {
 						if(foundPassword) {
-							response.status(200).json({valid: true, admin: user.admin});
+							const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
+							response.status(200).json({valid: true, token: token, user: user});
 							response.end();
 						} else {
 							response.status(200).json({valid: false, allowed: true});
@@ -54,6 +54,16 @@ module.exports = function(app, bcryptjs, models) {
 		} else {
 			response.status(200).json({valid: false, allowed: false, errorFields: errorFields});
 			response.end();
+		}
+	});
+	app.get("/checkStatus", (request, response) => {
+		try {
+            const token = request.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, "newSecretKey");
+			request.userData = decoded;
+			response.status(200).json({loggedIn: true});
+        } catch (error){
+            response.status(401).json({loggedIn: false});
 		}
 	});
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
 const bcryptjs = require("bcryptjs");
@@ -21,7 +22,7 @@ app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
 const registration = require("./controllers/registration.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl);
-const login = require("./controllers/login.js")(app, bcryptjs, models);
+const login = require("./controllers/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./controllers/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
 const adminOverview = require("./controllers/admin/overview.js")(app, models);
 
