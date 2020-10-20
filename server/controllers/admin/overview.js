@@ -1,5 +1,6 @@
-module.exports = function(app, mongoose, models, bodyParser) {
-    var Chatroom = models.Chatroom;
+module.exports = function(app, models) {
+    const User = models.User;
+    const Chatroom = models.Chatroom;
     app.get("/getChatrooms", (request, response) => {
         Chatroom.find({}).then(chatrooms => {
             var public = [];
@@ -16,26 +17,26 @@ module.exports = function(app, mongoose, models, bodyParser) {
             response.end();
         });
     });
-    app.post("/createChatroom", (request, response) => {
-        var allowRegistration = true;
+    app.post("/createPublicChatroom", (request, response) => {
+        var allowCreation = true;
         var errorFields = [];
         var name = request.body.name;
         if(!name) {
             errorFields.push("name");
-            allowRegistration = false;
+            allowCreation = false;
         }
         var icon = request.body.icon;
         if(!icon) {
             errorFields.push("icon");
-            allowRegistration = false;
+            allowCreation = false;
         }
-        if(allowRegistration) {
+        if(allowCreation) {
             var type = "public";
             var participants = ["admin"];
             var blockedParticipants = [];
-            var newChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
-            newChatroom.save().then(chatroom => {
-                response.status(200).json({created: true, chatroom: chatroom});
+            var newPublicChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
+            newPublicChatroom.save().then(publicChatroom => {
+                response.status(200).json({created: true, publicChatroom: publicChatroom});
                 response.end();
             }).catch(error => console.log(error));
         } else {
@@ -43,15 +44,15 @@ module.exports = function(app, mongoose, models, bodyParser) {
             response.end();
         }
     });
-    app.put("/editChatroom", (request, response) => {
+    app.put("/editPublicChatroom", (request, response) => {
         var _id = request.body._id;
         var name = request.body.name;
         var icon = request.body.icon;
         if(_id && name && icon) {
             var query = {_id: _id};
             var update = {name: name, icon: icon};
-            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
-                if(!isEmpty(chatroom)) {
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
+                if(!isEmpty(publicChatroom)) {
                     response.status(200).json({edited: true});
                     response.end();
                 }
@@ -65,12 +66,12 @@ module.exports = function(app, mongoose, models, bodyParser) {
             response.end();
         }
     });
-    app.delete("/deleteChatroom/:chatroomId", (request, response) => {
-        var _id = request.params.chatroomId;
+    app.delete("/deletePublicChatroom/:publicChatroomId", (request, response) => {
+        var _id = request.params.publicChatroomId;
         if(_id) {
             var query = {_id: _id};
-            Chatroom.findOneAndRemove(query).then(chatroom => {
-            if(!isEmpty(chatroom)) {
+            Chatroom.findOneAndRemove(query).then(publicChatroom => {
+            if(!isEmpty(publicChatroom)) {
                 response.status(200).json({deleted: true});
                 response.end();
             } else {
@@ -89,9 +90,9 @@ module.exports = function(app, mongoose, models, bodyParser) {
         if(_id && participant) {
             var query = {_id: _id};
             var update = {$pull: {participants: participant}, $push: {blockedParticipants: participant}};
-            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
-                if(!isEmpty(chatroom)) {
-                    response.status(200).json({blocked: true, chatroom: chatroom});
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
+                if(!isEmpty(publicChatroom)) {
+                    response.status(200).json({blocked: true, publicChatroom: publicChatroom});
                     response.end();
                 } else {
                     response.status(200).json({blocked: false});
@@ -109,9 +110,9 @@ module.exports = function(app, mongoose, models, bodyParser) {
         if(_id && participant) {
             var query = {_id: _id};
             var update = {$push: {participants: participant}, $pull: {blockedParticipants: participant}};
-            Chatroom.findOneAndUpdate(query, update, {new: true}).then(chatroom => {
-                if(!isEmpty(chatroom)) {
-                    response.status(200).json({allowed: true, chatroom: chatroom});
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
+                if(!isEmpty(publicChatroom)) {
+                    response.status(200).json({allowed: true, publicChatroom: publicChatroom});
                     response.end();
                 } else {
                     response.status(200).json({allowed: false});
@@ -120,6 +121,46 @@ module.exports = function(app, mongoose, models, bodyParser) {
             });
         } else {
             response.status(200).json({allowed: false});
+            response.end();
+        }
+    });
+    app.post("/createPrivateChatroom", (request, response) => {
+        var allowCreation = true;
+        var errorFields = [];
+        var _id = request.body._id;
+        if(!_id) {
+            errorFields.push("user");
+            allowCreation = false;
+        }
+        if(allowCreation) {
+            var type = "private";
+            var participants = ["admin"];
+            var blockedParticipants = [];
+            var newPublicChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
+            newPublicChatroom.save().then(publicChatroom => {
+                response.status(200).json({created: true, publicChatroom: publicChatroom});
+                response.end();
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({created: false, errorFields: errorFields});
+            response.end();
+        }
+    });
+    app.delete("/deletePrivateChatroom/:privateChatroomId", (request, response) => {
+        var _id = request.params.privateChatroomId;
+        if(_id) {
+            var query = {_id: _id};
+            Chatroom.findOneAndRemove(query).then(privateChatroom => {
+            if(!isEmpty(privateChatroom)) {
+                response.status(200).json({deleted: true});
+                response.end();
+            } else {
+                response.status(200).json({deleted: false});
+                response.end();
+            }
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({deleted: false});
             response.end();
         }
     });

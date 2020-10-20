@@ -1,4 +1,4 @@
-module.exports = function(app, bcryptjs, mongoose, models, transporter, emailUser, bodyParser, baseUrl, port, loginUrl) {
+module.exports = function(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl) {
   const User = models.User;
   app.post("/createUser", (request, response) => {
     var allowRegistration = true;
@@ -75,7 +75,7 @@ module.exports = function(app, bcryptjs, mongoose, models, transporter, emailUse
       if(!isEmpty(user)) {
         response.render("registration.html", {confirmed: true, loginUrl: loginUrl});
       } else {
-      response.render("registration.html", {confirmed: false, adminEmail: emailUser});
+        response.render("registration.html", {confirmed: false, adminEmail: emailUser});
       }
     }).catch(error => console.log(error));
   });

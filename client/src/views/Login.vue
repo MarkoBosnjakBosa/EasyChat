@@ -94,11 +94,11 @@
           if(response.data.valid) {
             this.user = { login: "", password: ""};
             this.loginError = false, this.passwordError = false, this.passwordMatch = false, this.submitting = false;
-            /*if(response.data.admin) {
-              this.$router.push({name: "AdminProfile"});
+            if(response.data.admin) {
+              //this.$router.push({name: "AdminOverview"});
             } else {
-              this.$router.push({name: "Profile"});
-            }*/
+              //this.$router.push({name: "Overview"});
+            }
           } else {
             if(response.data.allowed) {
               this.passwordMatch = true;

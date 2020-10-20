@@ -37,16 +37,16 @@
                         </ul>
                     </div>
                 </nav>
-                <div id="chatroom">
-                    <form autocomplete="off" @submit.prevent="createChatroom">
+                <div id="publicChatroom">
+                    <form autocomplete="off" @submit.prevent="createPublicChatroom">
                         <h1>Chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError}" placeholder="Name" v-model="chatroom.name" ref="first" @focus="clearNameStatus" @keyPress="clearNameStatus">
+                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError && publicSubmitting}" placeholder="Name" v-model="publicChatroom.name" ref="first" @focus="clearNameStatus" @keyPress="clearNameStatus">
                                 <small v-if="nameError" class="form-text errorInput">Please provide a valid name!</small>
                             </div>
                             <div class="form-group col-md-5">
-                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError}" placeholder="Icon" v-model="chatroom.icon" @focus="clearIconStatus" @keyPress="clearIconStatus">
+                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && publicSubmitting}" placeholder="Icon" v-model="publicChatroom.icon" @focus="clearIconStatus" @keyPress="clearIconStatus">
                                 <small v-if="iconError" class="form-text errorInput">Please provide a valid icon!</small>
                             </div>
                             <div class="form-group col-md-1">
@@ -87,16 +87,35 @@
                             </td>
                             <td v-else>{{publicChatroom.blockedParticipants.join(", ")}}</td>
                             <td v-if="editing == publicChatroom._id" class="padded">
-                                <i class="far fa-check-circle" @click="editChatroom(publicChatroom)"></i>
+                                <i class="far fa-check-circle" @click="editPublicChatroom(publicChatroom)"></i>
                                 <i class="far fa-times-circle" @click="disableEditing()"></i>
                             </td>
                             <td v-else>
                                 <i class="fas fa-pencil-alt" @click="enableEditing(publicChatroom._id)"></i>
-                                <i class="fas fa-trash" @click="deleteChatroom(publicChatroom._id)"></i>
+                                <i class="fas fa-trash" @click="deletePublicChatroom(publicChatroom._id)"></i>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <div id="privateChatroom">
+                    <form autocomplete="off" @submit.prevent="createPrivateChatroom">
+                        <h1>Private message</h1>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <select id="user" class="form-control" :class="{'errorField' : userError && privateSubmitting}" v-model="user" @focus="clearUserStatus" @keypress="clearUserStatus">
+                                    <option value="" disabled selected>Select user...</option>
+                                    <option value="top">Top</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                                <small v-if="priorityError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -114,20 +133,30 @@
             return {
                 publicChatrooms: [],
                 privateChatrooms: [],
-                submitting: false,
+                publicSubmitting: false,
                 nameError: false,
                 iconError: false,
-                chatroom: {
+                publicChatroom: {
                     name: "",
                     icon: ""
                 },
-                chatroomCreated: false,
-                editing: null
+                publicChatroomCreated: false,
+                editing: null,
+                privateSubmitting: false,
+                userError: false,
+                user: "",
+                privateChatroomCreated: false
             }
         },
         methods: {
-            createChatroom() {
-                this.submitting = true;
+            getChatrooms() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms").then(response => {
+                    this.publicChatrooms = response.data.public;
+                    this.privateChatrooms = response.data.private;
+                }).catch(error => console.log(error));
+            },
+            createPublicChatroom() {
+                this.publicSubmitting = true;
                 this.clearNameStatus();
                 this.clearIconStatus();
                 var allowSubmit = true;
@@ -140,24 +169,23 @@
                     allowSubmit = false;
                 }
                 if(!allowSubmit) {
-                    this.chatroomCreated = false;
+                    this.publicChatroomCreated = false;
                     return;
                 }
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createChatroom", {
-                    name: this.chatroom.name,
-                    icon: this.chatroom.icon
-                }).then(response => {
+                var body = {name: this.publicChatroom.name, icon: this.publicChatroom.icon};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createPublicChatroom", body).then(response => {
                     if(response.data.created) {
-                        var newChatroom = response.data.chatroom;
-                        this.publicChatrooms = [...this.publicChatrooms, newChatroom];
-                        this.chatroomCreated = true;
+                        var newPublicChatroom = response.data.publicChatroom;
+                        this.publicChatrooms = [...this.publicChatrooms, newPublicChatroom];
+                        this.publicChatroomCreated = true;
                         this.$refs.first.focus();
-                        this.chatroom = {name: "", icon: ""};
+                        this.publicChatroom = {name: "", icon: ""};
+                        this.nameError = false, this.iconError = false, this.publicSubmitting = false;
                     } else {
                         var errorFields = response.data.errorFields;
                         if(errorFields.includes("name")) this.nameError = true;
                         if(errorFields.includes("icon")) this.iconError = true;
-                        this.chatroomCreated = false;
+                        this.publicChatroomCreated = false;
                     }
                 }).catch(error => console.log(error));
             },
@@ -165,15 +193,12 @@
             clearIconStatus() { this.iconError = false; },
             enableEditing(id) { this.editing = id; },
             disableEditing() { this.editing = null; },
-            editChatroom(updatedChatroom) {
-                if(updatedChatroom.name != "" && updatedChatroom.icon != "") {
-                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editChatroom", {
-                        _id: updatedChatroom._id,
-                        name: updatedChatroom.name,
-                        icon: updatedChatroom.icon
-                    }).then(response => {
+            editPublicChatroom(updatedPublicChatroom) {
+                if(updatedPublicChatroom.name != "" && updatedPublicChatroom.icon != "") {
+                    var body = {_id: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editPublicChatroom", body).then(response => {
                         if(response.data.edited) {
-                            this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                            this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
                             this.editing = null;
                         }
                     }).catch(error => console.log(error));
@@ -181,32 +206,28 @@
                     return;
                 }
             },
-            deleteChatroom(chatroomId) {
-                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deleteChatroom/" + chatroomId).then(response => {
+            deletePublicChatroom(publicChatroomId) {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deletePublicChatroom/" + publicChatroomId).then(response => {
                     if(response.data.deleted) {
-                        this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != chatroomId);
+                        this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != publicChatroomId);
                     }
                 }).catch(error => console.log(error));
             },
-            blockParticipant(chatroomId, participant) {
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/blockParticipant", {
-                    _id: chatroomId,
-                    participant: participant
-                }).then(response => {
+            blockParticipant(publicChatroomId, participant) {
+                var body = {_id: publicChatroomId, participant: participant};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/blockParticipant", body).then(response => {
                     if(response.data.blocked) {
-                        var updatedChatroom = response.data.chatroom;
-                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                        var updatedPublicChatroom = response.data.publicChatroom;
+                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
                     }
                 }).catch(error => console.log(error));
             },
-            allowParticipant(chatroomId, participant) {
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/allowParticipant", {
-                    _id: chatroomId,
-                    participant: participant
-                }).then(response => {
+            allowParticipant(publicChatroomId, participant) {
+                var body = {_id: publicChatroomId, participant: participant};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/allowParticipant", body).then(response => {
                     if(response.data.allowed) {
-                        var updatedChatroom = response.data.chatroom;
-                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedChatroom._id ? updatedChatroom : publicChatroom);
+                        var updatedPublicChatroom = response.data.publicChatroom;
+                        this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
                     }
                 }).catch(error => console.log(error));
             },
@@ -253,20 +274,17 @@
             }
         },
         computed: {
-            invalidName() { return this.chatroom.name === ""; },
-            invalidIcon() { return this.chatroom.icon === ""; }
+            invalidName() { return this.publicChatroom.name === ""; },
+            invalidIcon() { return this.publicChatroom.icon === ""; }
         },
         created() {
-            axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms").then(response => {
-                this.publicChatrooms = response.data.public;
-                this.privateChatrooms = response.data.private;
-            }).catch(error => console.log(error));
+            this.getChatrooms();
         }
     }
 </script>
 
 <style scoped>
-    #chatroom {
+    #publicChatroom, #privateChatroom {
         margin: 0 auto;
         max-width: 800px;
     }

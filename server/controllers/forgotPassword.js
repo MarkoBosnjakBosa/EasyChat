@@ -1,4 +1,4 @@
-module.exports = function(app, bcryptjs, mongoose, models, transporter, emailUser, bodyParser, resetPasswordUrl) {
+module.exports = function(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl) {
   var User = models.User;
   app.post("/forgotPassword", (request, response) => {
     var email = request.body.email;
