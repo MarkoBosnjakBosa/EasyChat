@@ -25,9 +25,7 @@
                                 <a class="nav-link" href="#">Users</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{username}}
-                                </a>
+                                <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
                                     <a class="dropdown-item" href="#">Profile</a>
                                     <a class="dropdown-item" href="#">Change password</a>
