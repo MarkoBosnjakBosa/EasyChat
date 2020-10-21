@@ -21,10 +21,10 @@ app.set("views", __dirname + "/views");
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
-const registration = require("./controllers/registration.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl);
-const login = require("./controllers/login.js")(app, jwt, bcryptjs, models);
-const forgotPassword = require("./controllers/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
-const adminOverview = require("./controllers/admin/overview.js")(app, models);
+const registration = require("./routes/registration.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl);
+const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
+const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
+const adminOverview = require("./routes/admin/overview.js")(app, models);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;
