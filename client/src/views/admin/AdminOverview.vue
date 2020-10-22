@@ -7,7 +7,7 @@
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
                 <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom">{{privateChatroom.participants[1]}}</li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="privateChatroomType">{{privateChatroom.name}}</div><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -160,7 +160,7 @@
                 this.checkStatus();
             },
             getChatrooms() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms").then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms/" + this.username).then(response => {
                     this.publicChatrooms = response.data.public;
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
@@ -271,6 +271,14 @@
                     }
                 }).catch(error => console.log(error));
             },
+            deletePrivateChatroom(privateChatroomId) {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deletePrivateChatroom/" + privateChatroomId).then(response => {
+                    if(response.data.deleted) {
+                        this.privateChatrooms = this.privateChatrooms.filter(privateChatroom => privateChatroom._id != privateChatroomId);
+                        this.getUsers();
+                    }
+                }).catch(error => console.log(error));
+            },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
@@ -293,9 +301,9 @@
                             publicIcon.classList.add("fa-angle-double-down");
                         }
                     });
-                } else {
-                    var privateChatrooms = document.querySelector(".privateChatroom");
-                    var privateIcon = document.getElementById("publicIcon");
+                } else if(type == "private") {
+                    var privateChatrooms = document.querySelectorAll(".privateChatroom");
+                    var privateIcon = document.getElementById("privateIcon");
                     privateChatrooms.forEach(privateChatroom => {
                         if(privateChatroom.classList.contains("hiddenPrivateChatroom")) {
                             privateChatroom.classList.remove("hiddenPrivateChatroom");

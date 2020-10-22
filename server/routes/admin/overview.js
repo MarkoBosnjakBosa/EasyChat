@@ -1,8 +1,9 @@
 module.exports = function(app, models) {
     const User = models.User;
     const Chatroom = models.Chatroom;
-    app.get("/getChatrooms", (request, response) => {
-        var query = {};
+    app.get("/getChatrooms/:username", (request, response) => {
+        var username = request.params.username;
+        var query = {participants: username};
         Chatroom.find(query).then(chatrooms => {
             var public = [];
             var private = [];
@@ -11,10 +12,14 @@ module.exports = function(app, models) {
                     public.push(chatroom);
                 }
                 if(chatroom.type == "private") {
-                    private.push(chatroom);
+                    chatroom.participants.forEach(user => {
+                        if(user != username) {
+                            private.push({_id: chatroom._id, name: user});
+                        }
+                    });
                 }
             });
-            response.status(200).json({private: private, public: public});
+            response.status(200).json({public: public, private: private});
             response.end();
         });
     });
@@ -159,7 +164,7 @@ module.exports = function(app, models) {
             var blockedParticipants = [];
             var newPrivateChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
             newPrivateChatroom.save().then(privateChatroom => {
-                response.status(200).json({created: true, privateChatroom: privateChatroom});
+                response.status(200).json({created: true, privateChatroom: {_id: privateChatroom._id, name: secondUsername}});
                 response.end();
             }).catch(error => console.log(error));
         } else {

@@ -28,6 +28,14 @@
     float: left;
     font-weight: bold;
 }
+.privateChatroomType {
+    width: 90%;
+    float: left;
+}
+.fa-times {
+    color: #ff0000;
+    cursor: pointer;
+}
 .chatroomIcon {
     width: 10%;
     float: left;
