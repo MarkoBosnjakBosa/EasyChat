@@ -7,7 +7,7 @@
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
                 <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="chatroomIcon"><i :class="privateChatroom.icon"></i></div>{{privateChatroom.name}}</li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom">{{privateChatroom.participants[1]}}</li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -97,20 +97,26 @@
                 </table>
                 <div id="privateChatroom">
                     <form autocomplete="off" @submit.prevent="createPrivateChatroom">
-                        <h1>Private message</h1>
+                        <h1>Private chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="user" class="form-control" :class="{'errorField' : userError && privateSubmitting}" v-model="user" @focus="clearUserStatus" @keypress="clearUserStatus">
+                                <select id="user" class="form-control" :class="{'errorField' : privateUserError && privateSubmitting}" v-model="privateUser" @focus="clearPrivateUserStatus" @keypress="clearPrivateUserStatus">
                                     <option value="" disabled selected>Select user...</option>
-                                    <option v-for="user in users" :key="user._id" :value="user._id">{{user.username}}</option>
+                                    <option v-for="username in users" :key="username" :value="username">{{username}}</option>
                                 </select>
-                                <small v-if="userError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
+                                <small v-if="privateUserError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
+                        <div v-if="privateChatroomCreated" class="form-row">
+                            <div class="form-group col-md-2"></div>
+                            <div class="form-group col-md-6">
+                                <div class="creationSuccessful">Private chatroom has been successfully created!</div>
+                            </div>
+                        </div>  
                     </form>
                 </div>
             </div>
@@ -142,8 +148,8 @@
                 publicChatroomCreated: false,
                 editing: null,
                 privateSubmitting: false,
-                userError: false,
-                user: "",
+                privateUserError: false,
+                privateUser: "",
                 privateChatroomCreated: false
             }
         },
@@ -160,7 +166,7 @@
                 }).catch(error => console.log(error));
             },
             getUsers() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getUsers").then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getUsers/" + this.username).then(response => {
                     this.users = response.data.users;
                 }).catch(error => console.log(error));
             },
@@ -200,7 +206,7 @@
             },
             clearNameStatus() { this.nameError = false; },
             clearIconStatus() { this.iconError = false; },
-            clearUserStatus() { this.userError = false; },
+            clearPrivateUserStatus() { this.privateUserError = false; },
             enableEditing(id) { this.editing = id; },
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
@@ -238,6 +244,30 @@
                     if(response.data.allowed) {
                         var updatedPublicChatroom = response.data.publicChatroom;
                         this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
+                    }
+                }).catch(error => console.log(error));
+            },
+            createPrivateChatroom() {
+                this.privateSubmitting = true;
+                this.clearPrivateUserStatus();
+                if(this.invalidPrivateUser) {
+                    this.privateUserError = true;
+                    this.privateChatroomCreated = false;
+                    return;
+                }
+                var body = {firstUsername: this.username, secondUsername: this.privateUser};
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createPrivateChatroom", body).then(response => {
+                    if(response.data.created) {
+                        var newPrivateChatroom = response.data.privateChatroom;
+                        this.privateChatrooms = [...this.privateChatrooms, newPrivateChatroom];
+                        this.privateChatroomCreated = true;
+                        this.privateUser = "";
+                        this.privateUserError = false, this.privateSubmitting = false;
+                        this.getUsers();
+                    } else {
+                        var errorFields = response.data.errorFields;
+                        if(errorFields.includes("privateUser")) this.privateUserError = true;
+                        this.privateChatroomCreated = false;
                     }
                 }).catch(error => console.log(error));
             },
@@ -292,7 +322,8 @@
         },
         computed: {
             invalidName() { return this.publicChatroom.name === ""; },
-            invalidIcon() { return this.publicChatroom.icon === ""; }
+            invalidIcon() { return this.publicChatroom.icon === ""; },
+            invalidPrivateUser() { return this.privateUser === ""; }
         },
         created() {
             this.isLoggedIn();

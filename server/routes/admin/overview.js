@@ -125,24 +125,45 @@ module.exports = function(app, models) {
             response.end();
         }
     });
+    app.get("/getUsers/:username", (request, response) => {
+        var username = request.params.username;
+        var firstQuery = {$and: [{type: "private"}, {participants: username}]};
+        Chatroom.find(firstQuery).then(chatrooms => {
+            var alreadyParticipating = [username];
+            chatrooms.forEach(chatroom => {
+                var participants = chatroom.participants;
+                participants.forEach(participant => { if(participant != username) alreadyParticipating.push(participant); });
+            });
+            var secondQuery = {};
+            User.find(secondQuery).then(users => {
+                var allowedUsers = [];
+                users.forEach(user => {
+                    if(!alreadyParticipating.includes(user.username)) {
+                        allowedUsers.push(user.username); 
+                    };
+                });
+                response.status(200).json({users: allowedUsers});
+                response.end();
+            }).catch(error => console.log(error));
+        }).catch(error => console.log(error));
+    });
     app.post("/createPrivateChatroom", (request, response) => {
-        var allowCreation = true;
         var errorFields = [];
-        var _id = request.body._id;
-        if(!_id) {
-            errorFields.push("user");
-            allowCreation = false;
-        }
-        if(allowCreation) {
+        var firstUsername = request.body.firstUsername;
+        var secondUsername = request.body.secondUsername;
+        if(firstUsername && secondUsername) {
+            var name = "privateChatroom_" + firstUsername + "_" + secondUsername;
+            var icon = null;
             var type = "private";
-            var participants = ["admin"];
+            var participants = [firstUsername, secondUsername];
             var blockedParticipants = [];
-            var newPublicChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
-            newPublicChatroom.save().then(publicChatroom => {
-                response.status(200).json({created: true, publicChatroom: publicChatroom});
+            var newPrivateChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
+            newPrivateChatroom.save().then(privateChatroom => {
+                response.status(200).json({created: true, privateChatroom: privateChatroom});
                 response.end();
             }).catch(error => console.log(error));
         } else {
+            errorFields.push("privateUser");
             response.status(200).json({created: false, errorFields: errorFields});
             response.end();
         }
@@ -164,13 +185,6 @@ module.exports = function(app, models) {
             response.status(200).json({deleted: false});
             response.end();
         }
-    });
-    app.get("/getUsers", (request, response) => {
-        var query = {};
-        User.find(query).then(users => {
-            response.status(200).json({users: users});
-            response.end();
-        });
     });
 
     function getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants) {
