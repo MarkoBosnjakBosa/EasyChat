@@ -4,6 +4,8 @@ import Login from "../views/Login.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import AdminOverview from "../views/admin/AdminOverview.vue";
+import Overview from "../views/Overview.vue";
+import Chatroom from "../views/Chatroom.vue";
 
 const routes = [
 	{
@@ -30,6 +32,16 @@ const routes = [
 		path: "/admin/overview",
 		name: "AdminOverview",
 		component: AdminOverview
+	},
+	{
+		path: "/overview",
+		name: "Overview",
+		component: Overview
+	},
+	{
+		path: "/chatroom/:id",
+		name: "Chatroom",
+		component: Chatroom
 	}
 ]
 
