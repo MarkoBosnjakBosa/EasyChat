@@ -101,18 +101,18 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="user" class="form-control" :class="{'errorField' : privateUserError && privateSubmitting}" v-model="privateUser" @focus="clearPrivateUserStatus" @keypress="clearPrivateUserStatus">
+                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus" @keypress="clearAvailableUserStatus">
                                     <option value="" disabled selected>Select user...</option>
-                                    <option v-for="username in users" :key="username" :value="username">{{username}}</option>
+                                    <option v-for="availableUser in availableUsers" :key="availableUser" :value="availableUser">{{availableUser}}</option>
                                 </select>
-                                <small v-if="privateUserError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
+                                <small v-if="availableUserError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
                         <div v-if="privateChatroomCreated" class="form-row">
-                            <div class="form-group col-md-2"></div>
+                            <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-6">
                                 <div class="creationSuccessful">Private chatroom has been successfully created!</div>
                             </div>
@@ -137,7 +137,7 @@
                 username: "",
                 publicChatrooms: [],
                 privateChatrooms: [],
-                users: [],
+                availableUsers: [],
                 publicSubmitting: false,
                 nameError: false,
                 iconError: false,
@@ -148,8 +148,8 @@
                 publicChatroomCreated: false,
                 editing: null,
                 privateSubmitting: false,
-                privateUserError: false,
-                privateUser: "",
+                availableUserError: false,
+                availableUser: "",
                 privateChatroomCreated: false
             }
         },
@@ -165,9 +165,9 @@
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
             },
-            getUsers() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getUsers/" + this.username).then(response => {
-                    this.users = response.data.users;
+            getAvailableUsers() {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getAvailableUsers/" + this.username).then(response => {
+                    this.availableUsers = response.data.availableUsers;
                 }).catch(error => console.log(error));
             },
             createPublicChatroom() {
@@ -204,9 +204,6 @@
                     }
                 }).catch(error => console.log(error));
             },
-            clearNameStatus() { this.nameError = false; },
-            clearIconStatus() { this.iconError = false; },
-            clearPrivateUserStatus() { this.privateUserError = false; },
             enableEditing(id) { this.editing = id; },
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
@@ -249,24 +246,24 @@
             },
             createPrivateChatroom() {
                 this.privateSubmitting = true;
-                this.clearPrivateUserStatus();
-                if(this.invalidPrivateUser) {
-                    this.privateUserError = true;
+                this.clearAvailableUserStatus();
+                if(this.invalidAvailableUser) {
+                    this.availableUserError = true;
                     this.privateChatroomCreated = false;
                     return;
                 }
-                var body = {firstUsername: this.username, secondUsername: this.privateUser};
+                var body = {firstUsername: this.username, secondUsername: this.availableUser};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createPrivateChatroom", body).then(response => {
                     if(response.data.created) {
                         var newPrivateChatroom = response.data.privateChatroom;
                         this.privateChatrooms = [...this.privateChatrooms, newPrivateChatroom];
                         this.privateChatroomCreated = true;
-                        this.privateUser = "";
-                        this.privateUserError = false, this.privateSubmitting = false;
-                        this.getUsers();
+                        this.availableUser = "";
+                        this.availableUserError = false, this.privateSubmitting = false;
+                        this.getAvailableUsers();
                     } else {
                         var errorFields = response.data.errorFields;
-                        if(errorFields.includes("privateUser")) this.privateUserError = true;
+                        if(errorFields.includes("availableUser")) this.availableUserError = true;
                         this.privateChatroomCreated = false;
                     }
                 }).catch(error => console.log(error));
@@ -275,7 +272,7 @@
                 axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deletePrivateChatroom/" + privateChatroomId).then(response => {
                     if(response.data.deleted) {
                         this.privateChatrooms = this.privateChatrooms.filter(privateChatroom => privateChatroom._id != privateChatroomId);
-                        this.getUsers();
+                        this.getAvailableUsers();
                     }
                 }).catch(error => console.log(error));
             },
@@ -289,6 +286,9 @@
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
             },
+            clearNameStatus() { this.nameError = false; },
+            clearIconStatus() { this.iconError = false; },
+            clearAvailableUserStatus() { this.availableUserError = false; },
             toggleChatrooms(type) {
                 if(type == "public") {
                     var publicChatrooms = document.querySelectorAll(".publicChatroom");
@@ -334,12 +334,12 @@
         computed: {
             invalidName() { return this.publicChatroom.name === ""; },
             invalidIcon() { return this.publicChatroom.icon === ""; },
-            invalidPrivateUser() { return this.privateUser === ""; }
+            invalidAvailableUser() { return this.availableUser === ""; }
         },
         created() {
             this.isLoggedIn();
             this.getChatrooms();
-            this.getUsers();
+            this.getAvailableUsers();
         }
     }
 </script>

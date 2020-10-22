@@ -23,6 +23,14 @@ module.exports = function(app, models) {
             response.end();
         });
     });
+    app.get("/getAvailableChatrooms/:username", (request, response) => {
+        var username = request.params.username;
+        var query = {$and: [{type: "public"}, {participants: {$ne: username}}]};
+        Chatroom.find(query).then(availableChatrooms => {
+            response.status(200).json({availableChatrooms: availableChatrooms});
+            response.end();
+        });
+    });
     app.post("/createPublicChatroom", (request, response) => {
         var allowCreation = true;
         var errorFields = [];
@@ -130,30 +138,50 @@ module.exports = function(app, models) {
             response.end();
         }
     });
-    app.get("/getUsers/:username", (request, response) => {
+    app.put("/joinAvailableChatroom", (request, response) => {
+        var _id = request.body._id;
+        var participant = request.body.participant;
+        var errorFields = ["availableChatroom"];
+        if(_id && participant) {
+            var query = {_id: _id};
+            var update = {$push: {participants: participant}};
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(availableChatroom => {
+                if(!isEmpty(availableChatroom)) {
+                    response.status(200).json({joined: true, availableChatroom: availableChatroom});
+                    response.end();
+                } else {
+                    response.status(200).json({joined: false, errorFields: errorFields});
+                    response.end();
+                }
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({joined: false, errorFields: errorFields});
+            response.end();
+        }
+    });
+    app.get("/getAvailableUsers/:username", (request, response) => {
         var username = request.params.username;
-        var firstQuery = {$and: [{type: "private"}, {participants: username}]};
-        Chatroom.find(firstQuery).then(chatrooms => {
+        var chatroomQuery = {$and: [{type: "private"}, {participants: username}]};
+        Chatroom.find(chatroomQuery).then(chatrooms => {
             var alreadyParticipating = [username];
             chatrooms.forEach(chatroom => {
                 var participants = chatroom.participants;
                 participants.forEach(participant => { if(participant != username) alreadyParticipating.push(participant); });
             });
-            var secondQuery = {};
-            User.find(secondQuery).then(users => {
-                var allowedUsers = [];
+            var userQuery = {};
+            User.find(userQuery).then(users => {
+                var availableUsers = [];
                 users.forEach(user => {
                     if(!alreadyParticipating.includes(user.username)) {
-                        allowedUsers.push(user.username); 
+                        availableUsers.push(user.username); 
                     };
                 });
-                response.status(200).json({users: allowedUsers});
+                response.status(200).json({availableUsers: availableUsers});
                 response.end();
             }).catch(error => console.log(error));
         }).catch(error => console.log(error));
     });
     app.post("/createPrivateChatroom", (request, response) => {
-        var errorFields = [];
         var firstUsername = request.body.firstUsername;
         var secondUsername = request.body.secondUsername;
         if(firstUsername && secondUsername) {
@@ -168,7 +196,7 @@ module.exports = function(app, models) {
                 response.end();
             }).catch(error => console.log(error));
         } else {
-            errorFields.push("privateUser");
+            var errorFields = ["availableUser"];
             response.status(200).json({created: false, errorFields: errorFields});
             response.end();
         }
