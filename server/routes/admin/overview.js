@@ -25,7 +25,7 @@ module.exports = function(app, models) {
     });
     app.get("/getAvailableChatrooms/:username", (request, response) => {
         var username = request.params.username;
-        var query = {$and: [{type: "public"}, {participants: {$ne: username}}]};
+        var query = {$and: [{type: "public"}, {participants: {$ne: username}}, {blockedParticipants: {$ne: username}}]};
         Chatroom.find(query).then(availableChatrooms => {
             response.status(200).json({availableChatrooms: availableChatrooms});
             response.end();
@@ -69,8 +69,7 @@ module.exports = function(app, models) {
                 if(!isEmpty(publicChatroom)) {
                     response.status(200).json({edited: true});
                     response.end();
-                }
-                else {
+                } else {
                     response.status(200).json({edited: false});
                     response.end();
                 }
@@ -156,6 +155,26 @@ module.exports = function(app, models) {
             }).catch(error => console.log(error));
         } else {
             response.status(200).json({joined: false, errorFields: errorFields});
+            response.end();
+        }
+    });
+    app.put("/leavePublicChatroom", (request, response) => {
+        var _id = request.body._id;
+        var participant = request.body.username;
+        if(_id && participant) {
+            var query = {_id: _id};
+            var update = {$pull: {participants: participant}};
+            Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
+                if(!isEmpty(publicChatroom)) {
+                    response.status(200).json({left: true});
+                    response.end();
+                } else {
+                    response.status(200).json({left: false});
+                    response.end();
+                }
+            }).catch(error => console.log(error));
+        } else {
+            response.status(200).json({left: false});
             response.end();
         }
     });

@@ -5,7 +5,7 @@
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><span @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</span><div class="leaveChatroomIcon" @click="leavePublicChatroom(publicChatroom._id)"><i class="fas fa-times"></i></div></li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
                 <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="privateChatroomType" @click="openChatroom(privateChatroom._id)">{{privateChatroom.name}}</div><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
             </ul>
@@ -141,7 +141,7 @@
                     return;
                 }
                 var body = {_id: this.availableChatroom, participant: this.username};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/joinAvailableChatroom/", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/joinAvailableChatroom", body).then(response => {
                     if(response.data.joined) {
                         var newAvailableChatroom = response.data.availableChatroom;
                         this.publicChatrooms = [...this.publicChatrooms, newAvailableChatroom];
@@ -157,8 +157,14 @@
                     
                 }).catch(error => console.log(error));
             },
-            removePublicChatroom() {
-
+            leavePublicChatroom(publicChatroomId) {
+                var body = {_id: publicChatroomId, username: this.username};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/leavePublicChatroom", body).then(response => {
+                    if(response.data.left) {
+                        this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != publicChatroomId);
+                        this.getAvailableChatrooms();
+                    }
+                }).catch(error => console.log(error));
             },
             createPrivateChatroom() {
                 this.privateSubmitting = true;
