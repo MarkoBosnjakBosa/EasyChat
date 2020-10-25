@@ -5,9 +5,9 @@
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><span @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</span><div class="leaveChatroomIcon" @click="leavePublicChatroom(publicChatroom._id)"><i class="fas fa-times"></i></div></li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</a></li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="privateChatroomType" @click="openChatroom(privateChatroom._id)">{{privateChatroom.name}}</div><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id">{{privateChatroom.name}}</a></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -33,17 +33,22 @@
                     </div>
                 </nav>
                 <div id="chatroomMessages">
-                    <div class="chat-window">
-                        <div class="messages">
-                            <div class="message" v-for="message in messages" v-bind:key="message._id">
-                                <div class="username">{{message.username}}</div>
-                                <div class="message-text">{{message.msg}}</div>
+                    <div class="chat">
+                        <div class="chatMessages">
+                            <div v-for="message in messages" v-bind:key="message._id" class="chatMessage">
+                                <div class="chatUsername">{{message.username}}</div>
+                                <div class="chatText">{{message.message}}</div>
                             </div>
                         </div>
-                        <form class="input-container" @submit.prevent="sendMessage">
-                            <input type="text" v-model="msg">
-                            <button type="submit">Send</button>
+                        <form class="newMessage" @submit.prevent="sendMessage">
+                            <input type="text" id="message" v-model="newMessage">
+                            <button type="submit" class="sendButton">Send</button>
                         </form>
+                    </div>
+                    <div>
+                        <ul class="onlineUsers">
+                            <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -59,14 +64,18 @@
     import io from "socket.io-client";
 
     export default {
-        name: "adminOverview",
+        name: "chatroom",
         data() {
             return {
+                socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT),
                 username: "",
+                chatroomId: "",
+                messages: [],
+                onlineUsers: [],
+                newMessage: "",
                 publicChatrooms: [],
                 privateChatrooms: [],
-                messages: [],
-                message: ""
+                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
             }
         },
         methods: {
@@ -81,8 +90,31 @@
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
             },
+            joinChatroom() {
+                this.socket.emit("loggedIn", this.chatroomId);
+                this.socket.on("userJoined", data => {
+                    this.messages = data.messages;
+                    this.onlineUsers = data.users;
+                    this.socket.emit("newUser", this.chatroomId, this.username);
+                });
+                this.listen();
+            },
+            listen() {
+                this.socket.on("userOnline", user =>  this.onlineUsers.push(user));
+                this.socket.on("userOffline", user => this.onlineUsers.splice(this.users.indexOf(user), 1));
+                this.socket.on("newMessage", message => this.messages.push(message));
+            },
+            sendMessage() {
+                if(!this.newMessage) return;
+                this.socket.emit("newMessage", this.chatroomId, this.newMessage);
+                this.newMessage = "";
+            },
             checkStatus() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => {
+                    if(response.data.loggedIn) {
+                        this.joinChatroom();
+                    }
+                }).catch(error => console.log(error));
             },
             openChatroom(chatroomId) {
                 this.$router.push("/chatroom/" + chatroomId);
@@ -138,6 +170,7 @@
         created() {
             this.isLoggedIn();
             this.getChatrooms();
+            this.chatroomId = this.$route.params.id;
         }
     }
 </script>
@@ -145,49 +178,58 @@
 <style scoped>
     #chatroomMessages {
         display: flex;
-        flex-direction: column;
+        justify-content: flex-start;
         height: 100vh;
-        width: 100%;
-        max-width: 768px;
-        margin: 0 auto;
+        max-width: 80%;
         padding: 15px;
         box-sizing: border-box;
     }
-    .chat-window {
-        flex: 1;
+    .chat {
+        flex: 0 0 auto;
         display: flex;
         flex-direction: column;
+        width: 90%;
         background-color: #F9F9F9;
         box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.15);
     }
-    .chat-window .messages {
-            flex: 1;
-            overflow: scroll;
+    .chatMessages {
+        flex: 1;
+        overflow: scroll;
     }
-    .chat-window .messages .message {
+    .chatMessage {
         display: flex;
         border-bottom: 1px solid #EFEFEF;
         padding: 10px;
     }
-    .chat-window .messages .username {
+    .chatUsername {
         width: 100px;
         margin-right: 15px;
     }
-    .chat-window .messages .message-text {
+    .chatText {
         flex: 1;
     }
-    .input-container {
+    .newMessage {
         display: flex;
     }
-    input {
+    #message {
         flex: 1;
         height: 35px;
         font-size: 18px;
         box-sizing: border-box;
     }
-    button {
+    .sendButton {
         width: 75px;
         height: 35px;
         box-sizing: border-box;
+    }
+    .onlineUsers {
+        list-style-type: none;
+    }
+    .onlineUser {
+        float: left;
+    }
+    .onlineUserIcon {
+        color: #008000;
+        margin-left: 5px;
     }
 </style>

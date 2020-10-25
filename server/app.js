@@ -1,13 +1,14 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
 const bcryptjs = require("bcryptjs");
 const mailer = require("nodemailer");
+const moment = require("moment");
 const dontenv = require("dotenv").config();
 const baseUrl = process.env.BASE_URL;
 const port = process.env.PORT;
@@ -27,7 +28,7 @@ const registration = require("./routes/registration.js")(app, bcryptjs, models, 
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
 const overview = require("./routes/admin/overview.js")(app, models);
-const chatroom = require("./chatroom/chatroom.js")(app, io, models);
+const chatroom = require("./chatroom/chatroom.js")(app, io, models, moment);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;
@@ -39,7 +40,7 @@ database.on("open", function() {
     console.log("Connection to the database has been successfully established!");
 });
 
-app.listen(port, function() {
+http.listen(port, function() {
 	console.log("Tasks app listening on " + baseUrl + port + "!");
 });
 
