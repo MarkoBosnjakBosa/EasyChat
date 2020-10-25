@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
 const bcryptjs = require("bcryptjs");
@@ -24,7 +26,8 @@ app.set("view engine", "html");
 const registration = require("./routes/registration.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
-const adminOverview = require("./routes/admin/overview.js")(app, models);
+const overview = require("./routes/admin/overview.js")(app, models);
+const chatroom = require("./chatroom/chatroom.js")(app, io, models);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;

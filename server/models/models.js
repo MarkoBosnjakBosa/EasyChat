@@ -17,9 +17,10 @@ module.exports = function(mongoose) {
     blockedParticipants: Array
   });
   var messageScheme = new mongoose.Schema({
-    chatroom_id: String,
-    description: String,
-    user: String
+    publicChatroomId: String,
+    message: String,
+    user: String,
+    date: String
   });
   var models = {
     User: mongoose.model("User", userScheme),
