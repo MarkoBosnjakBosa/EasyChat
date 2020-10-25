@@ -116,9 +116,6 @@
                     }
                 }).catch(error => console.log(error));
             },
-            openChatroom(chatroomId) {
-                this.$router.push("/chatroom/" + chatroomId);
-            },
             logout() {
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
