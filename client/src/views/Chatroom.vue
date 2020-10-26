@@ -32,13 +32,12 @@
                         </ul>
                     </div>
                 </nav>
-                <div id="chatroomMessages">
+                <div id="chatroomWindow">
                     <div class="chat">
-                        <div class="chatMessages">
-                            <div v-for="message in messages" v-bind:key="message._id" class="chatMessage">
-                                <div class="chatUsername">{{message.username}}</div>
-                                <div class="chatText">{{message.message}}</div>
-                            </div>
+                        <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
+                            <img :src="message.avatar.image" alt="Avatar" :class="{'right': isMyMessage(message.username)}" style="width:100%;">
+                            <p>{{message.message}}</p>
+                            <span :class="isMyMessage(message.username) ? 'time-left' : 'time-right'">{{message.date}}</span>
                         </div>
                         <form class="newMessage" @submit.prevent="sendMessage">
                             <input type="text" id="message" v-model="newMessage">
@@ -109,6 +108,10 @@
                 this.socket.emit("newMessage", this.chatroomId, this.newMessage);
                 this.newMessage = "";
             },
+            isMyMessage(username) {
+                if(username == this.username) return true;
+                return false;
+            },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => {
                     if(response.data.loggedIn) {
@@ -173,54 +176,50 @@
 </script>
 
 <style scoped>
-    #chatroomMessages {
-        display: flex;
-        justify-content: flex-start;
-        height: 100vh;
-        max-width: 80%;
-        padding: 15px;
-        box-sizing: border-box;
-    }
     .chat {
-        flex: 0 0 auto;
-        display: flex;
-        flex-direction: column;
-        width: 90%;
-        background-color: #F9F9F9;
-        box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.15);
+        width: 800px;
+        padding: 0 20px;
+        float: left;
     }
-    .chatMessages {
-        flex: 1;
-        overflow: scroll;
-    }
-    .chatMessage {
-        display: flex;
-        border-bottom: 1px solid #EFEFEF;
+    .message {
+        border: 2px solid #dedede;
+        background-color: #f1f1f1;
+        border-radius: 5px;
         padding: 10px;
+        margin: 10px 0;
     }
-    .chatUsername {
-        width: 100px;
-        margin-right: 15px;
+    .myMessage {
+        border-color: #ccc;
+        background-color: #ddd;
     }
-    .chatText {
-        flex: 1;
+    .message::after {
+        content: "";
+        clear: both;
+        display: table;
     }
-    .newMessage {
-        display: flex;
+    .message img {
+        float: left;
+        max-width: 60px;
+        width: 100%;
+        margin-right: 20px;
+        border-radius: 50%;
     }
-    #message {
-        flex: 1;
-        height: 35px;
-        font-size: 18px;
-        box-sizing: border-box;
+    .message img.right {
+        float: right;
+        margin-left: 20px;
+        margin-right:0;
     }
-    .sendButton {
-        width: 75px;
-        height: 35px;
-        box-sizing: border-box;
+    .time-right {
+        float: right;
+        color: #aaa;
+    }
+    .time-left {
+        float: left;
+        color: #999;
     }
     .onlineUsers {
         list-style-type: none;
+        padding-top: 20px;
     }
     .onlineUser {
         float: left;

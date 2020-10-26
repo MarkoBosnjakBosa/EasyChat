@@ -19,6 +19,7 @@ module.exports = function(mongoose) {
   var messageScheme = new mongoose.Schema({
     chatroomId: String,
     username: String,
+    avatar: {name: String, contentType: String, image: Buffer},
     message: String,
     date: String
   });

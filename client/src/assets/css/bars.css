@@ -36,7 +36,7 @@
     float: left;
     cursor: pointer;
 }
-.fa-times {
+li .fa-times {
     color: #ff0000;
     cursor: pointer;
 }
