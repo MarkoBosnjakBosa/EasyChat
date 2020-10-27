@@ -1,6 +1,6 @@
 <template>
   <div id="registration" class="container-fluid">
-    <form autocomplete="off" @submit.prevent="createUser">
+    <form autocomplete="off" @submit.prevent="createUser" enctype="multipart/form-data">
       <h1>Register</h1>
       <div class="form-row">
         <div class="form-group col-md-4">
@@ -10,7 +10,7 @@
             </div>
             <div class="avatarWrapper">
               <button class="avatarUpload" :class="{'errorField' : avatarError && submitting}">Upload avatar <i class="fas fa-upload"></i></button>
-              <input type="file" id="avatar" @change="previewAvatar"/>
+              <input type="file" id="avatar" @change="selectAvatar"/>
             </div>
             <small v-if="avatarError && submitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
           </div>
@@ -79,11 +79,7 @@
           password: "",
           firstName: "",
           lastName: "",
-          avatar: {
-            name: "",
-            contentType: "",
-            image: ""
-          }
+          avatar: ""
         },
         userCreated: false,
         alreadyExists: ""
@@ -128,18 +124,18 @@
           this.userCreated = false;
           return;
         }
-        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createUser", {
-          username: this.user.username.toLowerCase(),
-          email: this.user.email,
-          password: this.user.password,
-          firstName: this.user.firstName,
-          lastName: this.user.lastName,
-          avatar: this.user.avatar
-        }).then(response => {
+        var formData = new FormData();
+        formData.append("username", this.user.username.toLowerCase());
+        formData.append("email", this.user.email);
+        formData.append("password", this.user.password);
+        formData.append("firstName", this.user.firstName);
+        formData.append("lastName", this.user.lastName);
+        formData.append("avatar", this.user.avatar);
+        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createUser", formData).then(response => {
           if(response.data.created) {
             this.userCreated = true;
             this.$refs.first.focus();
-            this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: {name: "", contentType: "", image: ""}};
+            this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: ""};
             document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle' width='100' height='100'>";
             this.alreadyExists = "";
             this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.submitting = false;
@@ -167,21 +163,18 @@
       clearFirstNameStatus() { this.firstNameError = false; },
       clearLastNameStatus() { this.lastNameError = false; },
       clearAvatarStatus() { this.avatarError = false; },
-      previewAvatar(event) {
+      selectAvatar(event) {
         var files = event.target.files;
         var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
         if(files && files.length && allowedExtensions.includes(files[0].type)) {
           var file = files[0];
           var reader = new FileReader();
-          var temp = this;
           reader.onload = function(e) {
-            temp.user.avatar.name = file.name;
-            temp.user.avatar.contentType = file.type;
-            temp.user.avatar.image = e.target.result;
-            temp.clearAvatarStatus();
             var previewAvatar = document.getElementById("previewAvatar");
             previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
           }
+          this.user.avatar = file;
+          this.clearAvatarStatus();
           reader.readAsDataURL(file);
         }
       },
@@ -203,7 +196,7 @@
         }
       },
       resetForm() {
-        this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: {name: "", contentType: "", image: ""}};
+        this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: ""};
         document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle' width='100' height='100'>";
         this.alreadyExists = "";
         this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.userCreated = false, this.submitting = false;
@@ -229,7 +222,7 @@
       },
       invalidFirstName() { return this.user.firstName === ""; },
       invalidLastName() { return this.user.lastName === ""; },
-      invalidAvatar() { return this.user.avatar.name === "" && this.user.avatar.contentType === "" && this.user.avatar.image === ""; }
+      invalidAvatar() { return this.user.avatar === ""; }
     }
   }
 

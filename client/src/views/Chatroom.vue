@@ -7,7 +7,7 @@
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
                 <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</a></li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id">{{privateChatroom.name}}</a></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + privateChatroom._id">{{privateChatroom.name}}</a></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -32,19 +32,27 @@
                         </ul>
                     </div>
                 </nav>
-                <div id="chatroomWindow">
+                <h1 class="chatroomHeader"><i :class="currentChatroom.icon"></i> {{currentChatroom.name}}</h1>
+                <div>
                     <div class="chat">
-                        <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
-                            <img :src="message.avatar.image" alt="Avatar" :class="{'right': isMyMessage(message.username)}" style="width:100%;">
-                            <p>{{message.message}}</p>
-                            <span :class="isMyMessage(message.username) ? 'time-left' : 'time-right'">{{message.date}}</span>
+                        <div v-if="!messages.length" class="message">
+                            <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar">
+                            <p>No messages yet...</p>
+                            <span class="dataRight">Bot {{renderCurrentDate()}}</span>
                         </div>
+                        <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
+                            <img :src="renderAvatar(message.avatar)" alt="Avatar" :class="{'right': isMyMessage(message.username)}">
+                            <p>{{message.message}}</p>
+                            <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
+                        </div>
+                        <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
                         <form class="newMessage" @submit.prevent="sendMessage">
                             <input type="text" id="message" v-model="newMessage">
                             <button type="submit" class="sendButton">Send</button>
                         </form>
                     </div>
                     <div>
+                        <h1>Online: </h1>
                         <ul class="onlineUsers">
                             <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
                         </ul>
@@ -59,8 +67,9 @@
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
     import "../assets/css/bars.css";
-    var axios = require("axios");
     import io from "socket.io-client";
+    import moment from "moment";
+    var axios = require("axios");
 
     export default {
         name: "chatroom",
@@ -71,7 +80,9 @@
                 chatroomId: "",
                 messages: [],
                 onlineUsers: [],
+                currentChatroom: "",
                 newMessage: "",
+                typing: "",
                 publicChatrooms: [],
                 privateChatrooms: [],
                 baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
@@ -90,10 +101,11 @@
                 }).catch(error => console.log(error));
             },
             joinChatroom() {
-                this.socket.emit("loggedIn", this.chatroomId);
+                this.socket.emit("loggedIn", this.chatroomId, this.username);
                 this.socket.on("userJoined", data => {
                     this.messages = data.messages;
                     this.onlineUsers = data.users;
+                    this.currentChatroom = data.currentChatroom;
                     this.socket.emit("newUser", this.chatroomId, this.username);
                 });
                 this.listen();
@@ -102,6 +114,8 @@
                 this.socket.on("userOnline", user =>  this.onlineUsers.push(user));
                 this.socket.on("userOffline", user => this.onlineUsers.splice(this.users.indexOf(user), 1));
                 this.socket.on("newMessage", message => this.messages.push(message));
+                this.socket.on("typing", user => this.typing = user);
+                this.socket.on("stopTyping", () => this.typing = "");
             },
             sendMessage() {
                 if(!this.newMessage) return;
@@ -109,8 +123,29 @@
                 this.newMessage = "";
             },
             isMyMessage(username) {
-                if(username == this.username) return true;
-                return false;
+                if(username == this.username) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            renderAvatar(avatar) {
+                return "data:" + avatar.contentType + ";base64," + (new Buffer.from(avatar.image)).toString("base64");
+            },
+            renderDate(date) {
+                var dateAndTime = date.split(" ");
+                var temporaryDateArray = dateAndTime[0].split(".");
+                var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
+                var parsedDate = moment(temporaryDate);
+                var currentDate = moment().startOf("day");
+                if(parsedDate.isBefore(currentDate)) {
+                    return dateAndTime[0];
+                } else {
+                    return dateAndTime[1];
+                }
+            },
+            renderCurrentDate() {
+                return moment().format("HH:mm");
             },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => {
@@ -165,7 +200,14 @@
                 }
             }
         },
-        computed: {
+        watch: {
+            newMessage(value) {
+                if(value) {
+                    this.socket.emit("typing", this.username);
+                } else {
+                    this.socket.emit("stopTyping");
+                }
+            }
         },
         created() {
             this.isLoggedIn();
@@ -176,8 +218,13 @@
 </script>
 
 <style scoped>
+    .chatroomHeader {
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
     .chat {
-        width: 800px;
+        width: 1000px;
         padding: 0 20px;
         float: left;
     }
@@ -209,17 +256,25 @@
         margin-left: 20px;
         margin-right:0;
     }
-    .time-right {
+    .dataRight {
         float: right;
         color: #aaa;
     }
-    .time-left {
+    .dataLeft {
         float: left;
         color: #999;
     }
+    .typing {
+        margin-bottom: 10px;
+    }
+    #message {
+        width: 90%;
+    }
+    .sendButton {
+        width: 10%;
+    }
     .onlineUsers {
         list-style-type: none;
-        padding-top: 20px;
     }
     .onlineUser {
         float: left;

@@ -1,4 +1,4 @@
-module.exports = function(app, io, models, moment) {
+module.exports = function(app, io, models, async, moment) {
     const Chatroom = models.Chatroom;
     const User = models.User;
     const Message = models.Message;
@@ -11,10 +11,37 @@ module.exports = function(app, io, models, moment) {
     });
 
     io.on("connection", socket => {
-        socket.on("loggedIn", (chatroomId) => {
+        socket.on("loggedIn", (chatroomId, username) => {
+            var queries = [];
             var messageQuery = {chatroomId: chatroomId};
-            Message.find(messageQuery).then(foundMessages => {
-                socket.emit("userJoined", {messages: foundMessages, users: chatrooms[chatroomId].users});
+            queries.push(function(callback) {
+                Message.find(messageQuery).then(foundMessages => {
+                    callback(null, foundMessages);
+                });
+            });
+            var chatroomQuery = {_id: chatroomId};
+            queries.push(function(callback) {
+                Chatroom.findOne(chatroomQuery).then(chatroom => {
+                  callback(null, chatroom);
+                });
+            });
+            async.parallel(queries).then(results => {
+                var messageResults = results[0];
+                var chatroomResult = results[1];
+                var currentChatroom = {};
+                if(chatroomResult.type == "public") {
+                    currentChatroom["name"] = chatroomResult.name;
+                    currentChatroom["icon"] = chatroomResult.icon;
+                }
+                if(chatroomResult.type == "private") {
+                    chatroomResult.participants.forEach(user => {
+                        if(user != username) {
+                            currentChatroom["name"] = user;
+                            currentChatroom["icon"] = "";
+                        }
+                    });
+                }
+                socket.emit("userJoined", {messages: messageResults, users: chatrooms[chatroomId].users, currentChatroom: currentChatroom});
             });
         });
         socket.on("newUser", (chatroomId, username) => {
@@ -34,6 +61,8 @@ module.exports = function(app, io, models, moment) {
                 }).catch(error => console.log(error));
             }).catch(error => console.log(error));
         });
+        socket.on("typing", username => socket.broadcast.emit("typing", username));
+        socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
         socket.on("disconnect", () => {
             getUserChatrooms(socket).forEach(chatroomId => {
                 socket.to(chatroomId).broadcast.emit("userOffline", chatrooms[chatroomId].users[socket.id]);

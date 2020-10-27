@@ -4,9 +4,12 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
 const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
-const bcryptjs = require("bcryptjs");
+const multer = require("multer");
+const fs = require("fs");
+const async = require("async");
 const mailer = require("nodemailer");
 const moment = require("moment");
 const dontenv = require("dotenv").config();
@@ -24,11 +27,11 @@ app.set("views", __dirname + "/views");
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
-const registration = require("./routes/registration.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, loginUrl);
+const registration = require("./routes/registration.js")(app, bcryptjs, models, multer, fs, transporter, emailUser, baseUrl, port, loginUrl);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
 const overview = require("./routes/admin/overview.js")(app, models);
-const chatroom = require("./chatroom/chatroom.js")(app, io, models, moment);
+const chatroom = require("./chatroom/chatroom.js")(app, io, models, async, moment);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;
