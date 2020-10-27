@@ -166,7 +166,7 @@
       selectAvatar(event) {
         var files = event.target.files;
         var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
-        if(files && files.length && allowedExtensions.includes(files[0].type)) {
+        if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
           var file = files[0];
           var reader = new FileReader();
           reader.onload = function(e) {
