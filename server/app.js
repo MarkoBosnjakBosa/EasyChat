@@ -31,7 +31,9 @@ const registration = require("./routes/registration.js")(app, bcryptjs, models, 
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
 const overview = require("./routes/admin/overview.js")(app, models);
-const chatroom = require("./chatroom/chatroom.js")(app, io, models, async, moment);
+const chatroom = require("./chatroom/chatroom.js")(io, models, async, moment);
+const users = require("./routes/users.js")(app, models, fs);
+const profile = require("./routes/profile.js")(app, models, multer, fs);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;

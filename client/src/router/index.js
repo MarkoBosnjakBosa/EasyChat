@@ -6,6 +6,8 @@ import ResetPassword from "../views/ResetPassword.vue";
 import AdminOverview from "../views/admin/AdminOverview.vue";
 import Overview from "../views/Overview.vue";
 import Chatroom from "../views/Chatroom.vue";
+import Users from "../views/Users.vue";
+import Profile from "../views/Profile.vue";
 
 const routes = [
 	{
@@ -42,6 +44,16 @@ const routes = [
 		path: "/chatroom/:id",
 		name: "Chatroom",
 		component: Chatroom
+	},
+	{
+		path: "/admin/users",
+		name: "Users",
+		component: Users
+	},
+	{
+		path: "/profile",
+		name: "Profile",
+		component: Profile
 	}
 ]
 

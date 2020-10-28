@@ -1,4 +1,4 @@
-module.exports = function(app, io, models, async, moment) {
+module.exports = function(io, models, async, moment) {
     const Chatroom = models.Chatroom;
     const User = models.User;
     const Message = models.Message;
