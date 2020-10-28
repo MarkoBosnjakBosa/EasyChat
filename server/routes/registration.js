@@ -8,7 +8,18 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		  	callback(null, file.originalname);
 		},
 	});
-	var upload = multer({storage: storage});
+	var upload = multer({
+		storage: storage,
+		fileFilter: function (request, file, callback) {
+			if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+				callback(null, true);
+		  	} else {
+				request.extensionValidationError = true;
+				return callback(null, false, request.extensionValidationError);
+		  	}
+		},
+		limits: {fileSize: 500000}
+	});
 	app.post("/createUser", upload.single("avatar"), (request, response) => {
 		var allowRegistration = true;
 		var errorFields = [];
@@ -38,7 +49,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 			allowRegistration = false;
 		}
 		var avatar = request.file;
-		if(!avatar) {
+		if(!avatar && request.extensionValidationError) {
 			errorFields.push("avatar");
 			allowRegistration = false;
 		}
