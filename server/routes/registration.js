@@ -1,11 +1,13 @@
 module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailUser, baseUrl, port, loginUrl) {
 	const User = models.User;
 	var storage = multer.diskStorage({
-		destination: function (request, file, callback){
-		  	callback(null, "images/avatars");
+		destination: function (request, file, callback) {
+		  	callback(null, "images/avatars/");
 		},
-		filename: function (request, file, callback){
-		  	callback(null, file.originalname);
+		filename: function (request, file, callback) {
+			var fileArray = file.originalname.split(".");
+            var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
+		  	callback(null, fileName);
 		},
 	});
 	var upload = multer({

@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const models = require("./models/models.js")(mongoose);
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
 const async = require("async");
 const mailer = require("nodemailer");
 const moment = require("moment");
@@ -33,7 +34,7 @@ const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, mode
 const overview = require("./routes/admin/overview.js")(app, models);
 const chatroom = require("./chatroom/chatroom.js")(io, models, async, moment);
 const users = require("./routes/users.js")(app, models, fs);
-const profile = require("./routes/profile.js")(app, models, multer, fs);
+const profile = require("./routes/profile.js")(app, models, multer, fs, path);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;

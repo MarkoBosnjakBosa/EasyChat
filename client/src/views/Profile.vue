@@ -33,7 +33,7 @@
                     </div>
                 </nav>
                 <div class="personalInformation">
-                    <form autocomplete="off" @submit.prevent="createUser" enctype="multipart/form-data">
+                    <form autocomplete="off" @submit.prevent="editUser" enctype="multipart/form-data">
                         <h1>Personal information:</h1>
                         <div class="form-row">
                             <div class="form-group col-md-4">
@@ -85,7 +85,7 @@
                             <small v-if="passwordError && passwordSubmitting" class="form-text errorInput">Please provide a valid password!</small>
                         </div>
                         <div v-if="passwordReset" class="resetSuccessful">
-                            <div>Personal information have been successfully edited!</div>
+                            <div>Your password has been successfully reset!</div>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Reset</button>
@@ -149,6 +149,66 @@
             renderAvatar(avatar) {
                 return "data:" + avatar.contentType + ";base64," + (new Buffer.from(avatar.image)).toString("base64");
             },
+            editUser() {
+                this.userSubmitting = true;
+				this.clearFirstNameStatus();
+				this.clearLastNameStatus();
+				this.clearAvatarStatus();
+				var allowSubmit = true;
+				if(this.invalidFirstName) {
+					this.firstNameError = true;
+					allowSubmit = false;
+				}
+				if(this.invalidLastName) {
+					this.lastNameError = true;
+					allowSubmit = false;
+				}
+				if(this.invalidAvatar) {
+					this.avatarError = true;
+					allowSubmit = false;
+				}
+				if(!allowSubmit) {
+					this.userEdited = false;
+					return;
+				}
+                var formData = new FormData();
+				formData.append("username", this.username);
+				formData.append("firstName", this.user.firstName);
+				formData.append("lastName", this.user.lastName);
+                formData.append("avatar", this.user.avatar);
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editUser", formData).then(response => {
+                    if(response.data.edited) {
+                        this.userEdited = true;
+                        this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.userSubmitting = false;
+                    } else {
+                        var errorFields = response.data.errorFields;
+                        if(errorFields.includes("firstName")) this.firstNameError = true;
+                        if(errorFields.includes("lastName")) this.lastNameError = true;
+                        if(errorFields.includes("avatar")) this.avatarError = true;
+                        this.userEdited = false;
+                    }
+                }).catch(error => console.log(error));
+            },
+            resetPassword() {
+                this.passwordSubmitting = true;
+				this.clearPasswordStatus();
+				if(this.invalidPassword) {
+					this.passwordError = true;
+					this.passwordReset = false;
+					return;
+				}
+                var body = {username: this.username, password: this.password};
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/resetPassword", body).then(response => {
+                    if(response.data.reset) {
+                        this.passwordReset = true;
+                        this.password = "";
+                        this.passwordError = false, this.passwordSubmitting = false;
+                    } else {
+                        this.passwordError = true;
+                        this.passwordReset = false;
+                    }
+                }).catch(error => console.log(error));
+            },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
@@ -156,6 +216,49 @@
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
             },
+			clearFirstNameStatus() { this.firstNameError = false; },
+			clearLastNameStatus() { this.lastNameError = false; },
+            clearAvatarStatus() { this.avatarError = false; },
+            clearPasswordStatus() { 
+                this.passwordError = false; 
+                this.passwordReset = false;
+            },
+            selectAvatar(event) {
+				this.userSubmitting = false;
+				var files = event.target.files;
+				var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
+				if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
+					var file = files[0];
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var previewAvatar = document.getElementById("previewAvatar");
+						previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
+					}
+					this.user.avatar = file;
+					this.clearAvatarStatus();
+					reader.readAsDataURL(file);
+				} else {
+					this.avatarError = true;
+					this.userSubmitting = true;
+				}
+            },
+            togglePassword() {
+                var type = document.getElementById("password").getAttribute("type");
+				switch(type) {
+					case "password": {
+						document.getElementById("password").setAttribute("type", "text");
+						document.getElementById("togglePassword").classList.remove("fa-eye");
+						document.getElementById("togglePassword").classList.add("fa-eye-slash");
+						return;
+					}
+					case "text": {
+						document.getElementById("password").setAttribute("type", "password");
+						document.getElementById("togglePassword").classList.remove("fa-eye-slash");
+						document.getElementById("togglePassword").classList.add("fa-eye");
+						return;
+					}
+				}
+			},
             toggleChatrooms(type) {
                 if(type == "public") {
                     var publicChatrooms = document.querySelectorAll(".publicChatroom");
@@ -198,6 +301,19 @@
                 }
             }
         },
+        computed: {
+            invalidFirstName() { return this.user.firstName === ""; },
+			invalidLastName() { return this.user.lastName === ""; },
+			invalidAvatar() { return this.user.avatar === ""; },
+			invalidPassword() {
+				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+				if(this.user.password != "" && passwordFormat.test(this.user.password)) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		},
         created() {
             this.isLoggedIn();
             this.getChatrooms();
@@ -253,7 +369,7 @@
     .resetData {
 		margin-left: 10px;
 	}
-    .creationSuccessful, .resetSuccessful {
+    .editSuccessful, .resetSuccessful {
 		color: #008000;
 		margin-bottom: 10px;
 	}
