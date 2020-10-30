@@ -33,7 +33,7 @@ const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
 const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
 const overview = require("./routes/admin/overview.js")(app, models);
 const chatroom = require("./chatroom/chatroom.js")(io, models, async, moment);
-const users = require("./routes/users.js")(app, models, fs);
+const users = require("./routes/users.js")(app, models, async, fs, path);
 const profile = require("./routes/profile.js")(app, models, multer, fs, path);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
