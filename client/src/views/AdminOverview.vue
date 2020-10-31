@@ -5,9 +5,9 @@
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</a></li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="privateChatroomType" @click="openChatroom(privateChatroom._id)">{{privateChatroom.name}}</div><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + privateChatroom._id"><div class="privateChatroomType">{{privateChatroom.name}}</div></a><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -22,13 +22,12 @@
                                 <a class="nav-link" href="#">Overview</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Users</a>
+                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#">Profile</a>
-                                    <a class="dropdown-item" href="#">Change password</a>
+                                    <a class="dropdown-item" href="#" @click="goToProfile">Profile</a>
                                     <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
                             </li>
@@ -127,7 +126,7 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-    import "../../assets/css/bars.css";
+    import "../assets/css/bars.css";
     var axios = require("axios");
 
     export default {
@@ -135,6 +134,7 @@
         data() {
             return {
                 username: "",
+                isAdmin: false,
                 publicChatrooms: [],
                 privateChatrooms: [],
                 availableUsers: [],
@@ -150,14 +150,20 @@
                 privateSubmitting: false,
                 availableUserError: false,
                 availableUser: "",
-                privateChatroomCreated: false
+                privateChatroomCreated: false,
+                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
             }
         },
         methods: {
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
                 this.username = this.$store.getters.getUser.username;
-                this.checkStatus();
+                this.isAdmin = this.$store.getters.getUser.isAdmin;
+                if(this.isAdmin) {
+                    this.checkStatus();
+                } else {
+                    this.logout();
+                }
             },
             getChatrooms() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms/" + this.username).then(response => {
@@ -279,8 +285,11 @@
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
-            openChatroom(chatroomId) {
-                this.$router.push("/chatroom/" + chatroomId);
+            goToUsers() {
+                this.$router.push("/admin/users");
+            },
+            goToProfile() {
+                this.$router.push("/profile");
             },
             logout() {
                 this.$store.dispatch("logout");

@@ -47,7 +47,8 @@ module.exports = function(io, models, async, moment) {
         socket.on("newUser", (chatroomId, username) => {
             socket.join(chatroomId);
             chatrooms[chatroomId].users[socket.id] = username;
-            socket.to(chatroomId).broadcast.emit("userOnline", username);
+            var user = {socketId: socket.id, username: username};
+            socket.to(chatroomId).broadcast.emit("userOnline", user);
         });
         socket.on("newMessage", (chatroomId, message) => {
             var dateFormat = "DD.MM.YYYY HH:mm";
@@ -65,7 +66,7 @@ module.exports = function(io, models, async, moment) {
         socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
         socket.on("disconnect", () => {
             getUserChatrooms(socket).forEach(chatroomId => {
-                socket.to(chatroomId).broadcast.emit("userOffline", chatrooms[chatroomId].users[socket.id]);
+                socket.to(chatroomId).broadcast.emit("userOffline", socket.id);
                 delete chatrooms[chatroomId].users[socket.id];
             });
         });

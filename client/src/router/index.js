@@ -3,7 +3,7 @@ import Registration from "../views/Registration.vue";
 import Login from "../views/Login.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import ResetPassword from "../views/ResetPassword.vue";
-import AdminOverview from "../views/admin/AdminOverview.vue";
+import AdminOverview from "../views/AdminOverview.vue";
 import Overview from "../views/Overview.vue";
 import Chatroom from "../views/Chatroom.vue";
 import Users from "../views/Users.vue";

@@ -7,7 +7,7 @@ module.exports = function(mongoose) {
     lastName: String,
     avatar: {name: String, contentType: String, image: Buffer},
     acceptance: Boolean,
-  	admin: Boolean
+  	isAdmin: Boolean
   });
   var chatroomScheme = new mongoose.Schema({
     name: String,

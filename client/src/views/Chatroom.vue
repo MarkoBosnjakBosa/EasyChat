@@ -24,8 +24,7 @@
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#">Profile</a>
-                                    <a class="dropdown-item" href="#">Change password</a>
+                                    <a class="dropdown-item" href="#" @click="editProfile">Profile</a>
                                     <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
                             </li>
@@ -33,29 +32,37 @@
                     </div>
                 </nav>
                 <h1 class="chatroomHeader"><i :class="currentChatroom.icon"></i> {{currentChatroom.name}}</h1>
-                <div>
-                    <div class="chat">
-                        <div v-if="!messages.length" class="message">
-                            <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar">
-                            <p>No messages yet...</p>
-                            <span class="dataRight">Bot {{renderCurrentDate()}}</span>
+                <div class="container-fluid">
+                    <div class="form-row">
+                        <div class="col-md-8">
+                            <div v-if="!messages.length" class="message">
+                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar">
+                                <p>No messages yet...</p>
+                                <span class="dataRight">Bot {{renderCurrentDate()}}</span>
+                            </div>
+                            <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
+                                <img :src="renderAvatar(message.avatar)" alt="Avatar" :class="{'right': isMyMessage(message.username)}">
+                                <p>{{message.message}}</p>
+                                <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
+                            </div>
+                            <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
+                            <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
+                                <div class="form-row">
+                                    <div class="form-group col-md-11">
+                                        <input type="text" id="newMessage" class="form-control" v-model="newMessage"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <button type="submit" class="btn btn-primary">Send</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
-                            <img :src="renderAvatar(message.avatar)" alt="Avatar" :class="{'right': isMyMessage(message.username)}">
-                            <p>{{message.message}}</p>
-                            <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
+                        <div class="col-md-4">
+                            <h1>Online: </h1>
+                            <ul class="onlineUsers">
+                                <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
+                            </ul>
                         </div>
-                        <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
-                        <form class="newMessage" @submit.prevent="sendMessage">
-                            <input type="text" id="message" v-model="newMessage">
-                            <button type="submit" class="sendButton">Send</button>
-                        </form>
-                    </div>
-                    <div>
-                        <h1>Online: </h1>
-                        <ul class="onlineUsers">
-                            <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -77,9 +84,10 @@
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT),
                 username: "",
+                isAdmin: false,
                 chatroomId: "",
                 messages: [],
-                onlineUsers: [],
+                onlineUsers: {},
                 currentChatroom: "",
                 newMessage: "",
                 typing: "",
@@ -92,6 +100,7 @@
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
                 this.username = this.$store.getters.getUser.username;
+                this.isAdmin = this.$store.getters.getUser.isAdmin;
                 this.checkStatus();
             },
             getChatrooms() {
@@ -111,8 +120,8 @@
                 this.listen();
             },
             listen() {
-                this.socket.on("userOnline", user =>  this.onlineUsers.push(user));
-                this.socket.on("userOffline", user => this.onlineUsers.splice(this.users.indexOf(user), 1));
+                this.socket.on("userOnline", user => this.onlineUsers[user.socketId] = user.username);
+                this.socket.on("userOffline", socketId => delete this.onlineUsers[socketId]);
                 this.socket.on("newMessage", message => this.messages.push(message));
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
@@ -223,11 +232,6 @@
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    .chat {
-        width: 1000px;
-        padding: 0 20px;
-        float: left;
-    }
     .message {
         border: 2px solid #dedede;
         background-color: #f1f1f1;
@@ -247,7 +251,8 @@
     .message img {
         float: left;
         max-width: 60px;
-        width: 100%;
+        width: 50px;
+        height: 50px;
         margin-right: 20px;
         border-radius: 50%;
     }
@@ -267,14 +272,9 @@
     .typing {
         margin-bottom: 10px;
     }
-    #message {
-        width: 90%;
-    }
-    .sendButton {
-        width: 10%;
-    }
     .onlineUsers {
         list-style-type: none;
+        padding-left: 0px;
     }
     .onlineUser {
         float: left;
