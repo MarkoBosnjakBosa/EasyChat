@@ -51,6 +51,9 @@
 						<button type="submit" class="btn btn-primary">Submit</button>
 						<button type="button" class="btn btn-danger resetForm" @click="resetForm()">Reset</button>
 					</div>
+					<div class="form-group">
+						<a href="#" class="btn btn-info" role="button" @click="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+					</div>
 				</div>
 			</div>
 		</form>
@@ -158,6 +161,9 @@
 					}
 				}).catch(error => console.log(error));
 			},
+			login() {
+                this.$router.push("/login");
+            },
 			clearUsernameStatus() { this.usernameError = false; },
 			clearEmailStatus() { this.emailError = false; },
 			clearPasswordStatus() { this.passwordError = false; },

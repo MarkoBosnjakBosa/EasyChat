@@ -43,6 +43,25 @@ module.exports = function(app, bcryptjs, models, transporter, emailUser, resetPa
 			response.end();
 		}
 	});
+	app.post("/forgotUsername", (request, response) => {
+		var email = request.body.email;
+		if(email && isValidEmail(email)) {
+			var query = {email: email};
+			User.findOne(query).then(user => {
+				if(!isEmpty(user)) {
+					sendForgotUsernameEmail(user.username, user.email, user.firstName);
+					response.status(200).json({exists: true});
+					response.end();
+				} else {
+					response.status(200).json({exists: false});
+					response.end();
+				}
+			}).catch(error => console.log(error));
+		} else {
+			response.status(200).json({exists: false});
+			response.end();
+		}
+	});
 
 	function sendResetPasswordEmail(username, email, firstName) {
 		var mailOptions = {
@@ -54,6 +73,21 @@ module.exports = function(app, bcryptjs, models, transporter, emailUser, resetPa
 				"<p>Dear <b>" + firstName + "</b>,</p>" +
 				"<p>you have requested to change your password. Click on the button below to proceed with your request:" +
 				"<p style='margin-bottom: 30px;'><a href='" + resetPasswordUrl + username + "' target='_blank' style=' background-color: #1a1aff; border: none; color: #fff; padding: 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius:5px;'>Reset password</a></p>" +
+				"<p>Kind regards,<br/> your Admin Team</p>" +
+				"</body>" +
+				"</html>"
+		};
+		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
+	}
+	function sendForgotUsernameEmail(username, email, firstName) {
+		var mailOptions = {
+			from: emailUser,
+			to: email,
+			subject: "Reset password",
+			html: "<html>" +
+				"<body>" +
+				"<p>Dear <b>" + firstName + "</b>,</p>" +
+				"<p>you have requested to retrieve your username. Your username is: <b><i>" + username + "</i></b>.</p>" +
 				"<p>Kind regards,<br/> your Admin Team</p>" +
 				"</body>" +
 				"</html>"

@@ -1,7 +1,7 @@
 <template>
-	<div id="forgotPassword" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="forgotPassword">
-			<h1>Forgot password</h1>
+	<div id="forgotUsername" class="container-fluid">
+		<form autocomplete="off" @submit.prevent="forgotUsername">
+			<h1>Forgot username</h1>
 			<div class="form-group">
 				<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" placeholder="Email" v-model="email" ref="first" @focus="clearEmailStatus" @keypress="clearEmailStatus"/>
 				<small v-if="emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
@@ -10,9 +10,9 @@
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
-			<div class="form-group">
-				<a href="#" class="btn btn-info" role="button" @click="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
-			</div>
+            <div class="form-group">
+                <a href="#" class="btn btn-info" role="button" @click="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+            </div>
 		</form>
 	</div>
 </template>
@@ -23,7 +23,7 @@
 	var axios = require("axios");
 
 	export default {
-		name: "forgotPassword",
+		name: "forgotUsername",
 		data() {
 			return {
 				submitting: false,
@@ -33,7 +33,7 @@
 			}
 		},
 		methods: {
-			forgotPassword() {
+			forgotUsername() {
 				this.submitting = true;
 				this.clearEmailStatus();
 				if(this.invalidEmail) {
@@ -42,7 +42,7 @@
 					return;
 				}
 				var body = {email: this.email};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/forgotPassword", body).then(response => {
+				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/forgotUsername", body).then(response => {
 					if(response.data.exists) {
 						this.emailSent = true;
 						this.$refs.first.focus();
@@ -53,8 +53,8 @@
 						this.emailSent = false;
 					}
 				}).catch(error => console.log(error));
-			},
-			login() {
+            },
+            login() {
                 this.$router.push("/login");
             },
 			clearEmailStatus() { this.emailError = false; }
@@ -73,10 +73,10 @@
 </script>
 
 <style scoped>
-	#forgotPassword {
+	#forgotUsername {
 		margin: 0 auto;
-		max-width: 400px;
-		text-align: center;
+        max-width: 400px;
+        text-align: center;
 	}
 	h1 {
 		text-align: center;
