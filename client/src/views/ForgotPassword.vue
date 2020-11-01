@@ -38,7 +38,7 @@
           this.emailSent = false;
           return;
         }
-        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/forgotPassword", {
+        axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/forgotPassword", {
           email: this.email
         }).then(response => {
           if(response.data.exists) {

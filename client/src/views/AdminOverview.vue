@@ -22,12 +22,12 @@
                                 <a class="nav-link" href="#">Overview</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="goToProfile">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="openProfile">Profile</a>
                                     <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
                             </li>
@@ -166,13 +166,13 @@
                 }
             },
             getChatrooms() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getChatrooms/" + this.username).then(response => {
                     this.publicChatrooms = response.data.public;
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
             },
             getAvailableUsers() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getAvailableUsers/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getAvailableUsers/" + this.username).then(response => {
                     this.availableUsers = response.data.availableUsers;
                 }).catch(error => console.log(error));
             },
@@ -194,7 +194,7 @@
                     return;
                 }
                 var body = {name: this.publicChatroom.name, icon: this.publicChatroom.icon};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createPublicChatroom", body).then(response => {
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createPublicChatroom", body).then(response => {
                     if(response.data.created) {
                         var newPublicChatroom = response.data.publicChatroom;
                         this.publicChatrooms = [...this.publicChatrooms, newPublicChatroom];
@@ -210,12 +210,12 @@
                     }
                 }).catch(error => console.log(error));
             },
-            enableEditing(id) { this.editing = id; },
+            enableEditing(publicChatroomId) { this.editing = publicChatroomId; },
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
                 if(updatedPublicChatroom.name != "" && updatedPublicChatroom.icon != "") {
                     var body = {_id: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
-                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editPublicChatroom", body).then(response => {
+                    axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editPublicChatroom", body).then(response => {
                         if(response.data.edited) {
                             this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
                             this.editing = null;
@@ -226,7 +226,7 @@
                 }
             },
             deletePublicChatroom(publicChatroomId) {
-                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deletePublicChatroom/" + publicChatroomId).then(response => {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deletePublicChatroom/" + publicChatroomId).then(response => {
                     if(response.data.deleted) {
                         this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != publicChatroomId);
                     }
@@ -234,7 +234,7 @@
             },
             blockParticipant(publicChatroomId, participant) {
                 var body = {_id: publicChatroomId, participant: participant};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/blockParticipant", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/blockParticipant", body).then(response => {
                     if(response.data.blocked) {
                         var updatedPublicChatroom = response.data.publicChatroom;
                         this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
@@ -243,7 +243,7 @@
             },
             allowParticipant(publicChatroomId, participant) {
                 var body = {_id: publicChatroomId, participant: participant};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/allowParticipant", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/allowParticipant", body).then(response => {
                     if(response.data.allowed) {
                         var updatedPublicChatroom = response.data.publicChatroom;
                         this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
@@ -259,7 +259,7 @@
                     return;
                 }
                 var body = {firstUsername: this.username, secondUsername: this.availableUser};
-                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createPrivateChatroom", body).then(response => {
+                axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createPrivateChatroom", body).then(response => {
                     if(response.data.created) {
                         var newPrivateChatroom = response.data.privateChatroom;
                         this.privateChatrooms = [...this.privateChatrooms, newPrivateChatroom];
@@ -275,7 +275,7 @@
                 }).catch(error => console.log(error));
             },
             deletePrivateChatroom(privateChatroomId) {
-                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/deletePrivateChatroom/" + privateChatroomId).then(response => {
+                axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deletePrivateChatroom/" + privateChatroomId).then(response => {
                     if(response.data.deleted) {
                         this.privateChatrooms = this.privateChatrooms.filter(privateChatroom => privateChatroom._id != privateChatroomId);
                         this.getAvailableUsers();
@@ -283,12 +283,12 @@
                 }).catch(error => console.log(error));
             },
             checkStatus() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
-            goToUsers() {
+            openUsers() {
                 this.$router.push("/admin/users");
             },
-            goToProfile() {
+            openProfile() {
                 this.$router.push("/profile");
             },
             openChatroom(chatroomId) {

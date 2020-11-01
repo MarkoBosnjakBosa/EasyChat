@@ -53,7 +53,7 @@
 					return;
 				}
 				var body = {username: this.user.username, password: this.user.password};
-				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/resetPassword", body).then(response => {
+				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
 					if(response.data.reset) {
 						this.passwordReset = true;
 						this.$refs.first.focus();

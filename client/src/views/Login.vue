@@ -57,7 +57,7 @@
 			},
 			checkUsername() {
 				var body = {username: this.user.username.toLowerCase()};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkUsername", body).then(response => {
+				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
 					if(response.data.exists) {
 						this.usernameError = false;
 					} else {
@@ -87,7 +87,7 @@
 					return;
 				}
 				var body = {username: this.user.username.toLowerCase(), password: this.user.password};
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/login", body).then(response => {
+				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body).then(response => {
 					if(response.data.valid) {
 						this.user = {username: "", password: ""};
 						this.usernameError = false, this.passwordError = false, this.passwordMatch = false, this.submitting = false;

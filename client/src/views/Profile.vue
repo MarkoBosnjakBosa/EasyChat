@@ -19,10 +19,10 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="goToOverview">Overview</a>
+                                <a class="nav-link" href="#" @click="openOverview">Overview</a>
                             </li>
                             <li v-if="isAdmin" class="nav-item">
-                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
@@ -68,9 +68,8 @@
                                 <div v-if="userEdited" class="editSuccessful">
                                     <div>Personal information have been successfully edited!</div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group submitButton">
                                     <button type="submit" class="btn btn-primary">Edit</button>
-                                    <button type="button" class="btn btn-danger resetData" @click="resetData()">Reset</button>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +88,7 @@
                         <div v-if="passwordReset" class="resetSuccessful">
                             <div>Your password has been successfully reset!</div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group submitButton">
                             <button type="submit" class="btn btn-primary">Reset</button>
                         </div>
                     </form>
@@ -140,13 +139,13 @@
                 this.checkStatus();
             },
             getChatrooms() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getChatrooms/" + this.username).then(response => {
                     this.publicChatrooms = response.data.public;
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
             },
             getUser() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getUser/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getUser/" + this.username).then(response => {
                     this.user = response.data.user;
                 }).catch(error => console.log(error));
             },
@@ -184,7 +183,7 @@
 				formData.append("firstName", this.user.firstName);
 				formData.append("lastName", this.user.lastName);
                 formData.append("avatar", this.user.avatar);
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/editUser", formData).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editUser", formData).then(response => {
                     if(response.data.edited) {
                         this.userEdited = true;
                         this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.userSubmitting = false;
@@ -206,7 +205,7 @@
 					return;
 				}
                 var body = {username: this.username, password: this.password};
-                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/resetPassword", body).then(response => {
+                axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
                     if(response.data.reset) {
                         this.passwordReset = true;
                         this.password = "";
@@ -218,16 +217,16 @@
                 }).catch(error => console.log(error));
             },
             checkStatus() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
-            goToOverview() {
+            openOverview() {
                 if(this.isAdmin) {
                     this.$router.push("/admin/overview");
                 } else {
                     this.$router.push("/overview");
                 }
             },
-            goToUsers() {
+            openUsers() {
                 this.$router.push("/admin/users");
             },
             openChatroom(chatroomId) {
@@ -237,9 +236,18 @@
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
             },
-			clearFirstNameStatus() { this.firstNameError = false; },
-			clearLastNameStatus() { this.lastNameError = false; },
-            clearAvatarStatus() { this.avatarError = false; },
+			clearFirstNameStatus() { 
+                this.firstNameError = false;
+                this.userEdited = false;
+            },
+			clearLastNameStatus() { 
+                this.lastNameError = false;
+                this.userEdited = false;
+            },
+            clearAvatarStatus() { 
+                this.avatarError = false;
+                this.userEdited = false;
+            },
             clearPasswordStatus() { 
                 this.passwordError = false; 
                 this.passwordReset = false;
@@ -387,8 +395,8 @@
 		top: 0px;
 		font-size: 100px;
 	}
-    .resetData {
-		margin-left: 10px;
+    .submitButton {
+		text-align: center;
 	}
     .editSuccessful, .resetSuccessful {
 		color: #008000;

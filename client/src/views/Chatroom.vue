@@ -21,6 +21,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Overview</a>
                             </li>
+                            <li v-if="isAdmin" class="nav-item">
+                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
@@ -82,7 +85,7 @@
         name: "chatroom",
         data() {
             return {
-                socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT),
+                socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT),
                 username: "",
                 isAdmin: false,
                 chatroomId: "",
@@ -106,7 +109,7 @@
                 this.checkStatus();
             },
             getChatrooms() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/getChatrooms/" + this.username).then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getChatrooms/" + this.username).then(response => {
                     this.publicChatrooms = response.data.public;
                     this.privateChatrooms = response.data.private;
                 }).catch(error => console.log(error));
@@ -166,7 +169,7 @@
                 return moment().format("HH:mm");
             },
             checkStatus() {
-                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => {
+                axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
                     if(response.data.loggedIn) {
                         this.joinChatroom();
                     }

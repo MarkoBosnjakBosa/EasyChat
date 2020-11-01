@@ -131,7 +131,7 @@
 				formData.append("firstName", this.user.firstName);
 				formData.append("lastName", this.user.lastName);
 				formData.append("avatar", this.user.avatar);
-				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/createUser", formData).then(response => {
+				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createUser", formData).then(response => {
 					if(response.data.created) {
 						this.userCreated = true;
 						this.$refs.first.focus();
