@@ -39,14 +39,15 @@
                     <div class="form-row">
                         <div class="col-md-8">
                             <div v-if="!messages.length" class="message">
-                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar">
+                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="avatar">
                                 <p>No messages yet...</p>
                                 <span class="dataRight">Bot {{renderCurrentDate()}}</span>
                             </div>
                             <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
-                                <img :src="renderAvatar(message.avatar)" alt="Avatar" :class="{'right': isMyMessage(message.username)}">
+                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="avatar" :class="{'right': isMyMessage(message.username)}">
                                 <p>{{message.message}}</p>
                                 <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
+                                <i v-if="isMyMessage(message.username)" class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
                             </div>
                             <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
@@ -128,6 +129,7 @@
                 this.socket.on("userOnline", user => this.onlineUsers[user.socketId] = user.username);
                 this.socket.on("userOffline", socketId => delete this.onlineUsers[socketId]);
                 this.socket.on("newMessage", message => this.messages.push(message));
+                this.socket.on("deleteMessage", messageId =>  this.messages = this.messages.filter(message => message._id != messageId));
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
             },
@@ -143,7 +145,11 @@
                 this.newMessage = "";
                 this.newMessageError = false, this.submitting = false;
             },
+            deleteMessage(messageId) {
+                this.socket.emit("deleteMessage", messageId);
+            },
             isMyMessage(username) {
+                console.log(username);
                 if(username == this.username) {
                     return true;
                 } else {
@@ -264,7 +270,7 @@
         clear: both;
         display: table;
     }
-    .message img {
+    .message .avatar {
         float: left;
         max-width: 60px;
         width: 50px;
@@ -272,7 +278,7 @@
         margin-right: 20px;
         border-radius: 50%;
     }
-    .message img.right {
+    .message .avatar.right {
         float: right;
         margin-left: 20px;
         margin-right:0;
@@ -284,6 +290,10 @@
     .dataLeft {
         float: left;
         color: #999;
+    }
+    .deleteMessage {
+        margin-left: 5px;
+        cursor: pointer;
     }
     .typing {
         margin-bottom: 10px;

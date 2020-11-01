@@ -64,6 +64,14 @@ module.exports = function(io, models, async, moment) {
                 }).catch(error => console.log(error));
             }
         });
+        socket.on("deleteMessage", messageId => {
+            var query = {_id: messageId};
+            Message.findOneAndRemove(query).then(message => {
+                if(!isEmpty(message)) {
+                    io.emit("deleteMessage", message._id);
+                }
+            }).catch(error => console.log(error));
+        });
         socket.on("typing", username => socket.broadcast.emit("typing", username));
         socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
         socket.on("disconnect", () => {
@@ -82,5 +90,8 @@ module.exports = function(io, models, async, moment) {
             if(chatroom.users[socket.id] != null) ids.push(id);
             return ids;
         }, []);
+    }
+    function isEmpty(object) {
+        return !object || Object.keys(object).length === 0;
     }
 }
