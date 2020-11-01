@@ -84,8 +84,8 @@
                             </td>
                             <td v-else>{{publicChatroom.blockedParticipants.join(", ")}}</td>
                             <td v-if="editing == publicChatroom._id" class="padded">
-                                <i class="far fa-check-circle" @click="editPublicChatroom(publicChatroom)"></i>
-                                <i class="far fa-times-circle" @click="disableEditing()"></i>
+                                <i class="far fa-check-circle editPublicChatroom" @click="editPublicChatroom(publicChatroom)"></i>
+                                <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
                             </td>
                             <td v-else>
                                 <i class="fas fa-pencil-alt" @click="enableEditing(publicChatroom._id)"></i>
@@ -377,13 +377,17 @@
         list-style-type: none;
         padding-left: 0px;
     }
+    .allowUser, .editPublicChatroom {
+        color: #008000;
+    }
     .allowUser {
         margin-left: 5px;
-        color: #008000;
+    }
+    .blockUser, .disableEditing {
+        color: #ff0000;
     }
     .blockUser {
         margin-left: 5px;
-        color: #ff0000;
     }
     .creationSuccessful {
         color: #008000;

@@ -19,15 +19,15 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Overview</a>
+                                <a class="nav-link" href="#" @click="openOverview">Overview</a>
                             </li>
                             <li v-if="isAdmin" class="nav-item">
-                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="editProfile">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="openProfileProfile">Profile</a>
                                     <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
                             </li>
@@ -45,9 +45,15 @@
                             </div>
                             <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
                                 <img :src="renderAvatar(message.avatar)" alt="Avatar" class="avatar" :class="{'right': isMyMessage(message.username)}">
-                                <p>{{message.message}}</p>
+                                <p v-if="isMyMessage(message.username) && editing == message._id">
+                                    <input type="text" class="form-control" v-model="message.message"/>
+                                    <i class="far fa-check-circle editMessage" @click="editMessage(message._id, message.message)"></i>
+                                    <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
+                                </p>
+                                <p v-else>{{message.message}}</p>
                                 <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
-                                <i v-if="isMyMessage(message.username)" class="fas fa-times-circle deleteMessage" @click="deleteMessage(message._id)"></i>
+                                <i v-if="isMyMessage(message.username) && editing != message._id" class="fas fa-pencil-alt" @click="enableEditing(message._id)"></i>
+                                <i v-if="isMyMessage(message.username) && editing != message._id" class="fas fa-times-circle" @click="deleteMessage(message._id)"></i>
                             </div>
                             <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
@@ -91,6 +97,7 @@
                 isAdmin: false,
                 chatroomId: "",
                 messages: [],
+                editing: null,
                 onlineUsers: {},
                 currentChatroom: "",
                 submitting: false,
@@ -129,6 +136,10 @@
                 this.socket.on("userOnline", user => this.onlineUsers[user.socketId] = user.username);
                 this.socket.on("userOffline", socketId => delete this.onlineUsers[socketId]);
                 this.socket.on("newMessage", message => this.messages.push(message));
+                this.socket.on("editMessage", editedMessage => {
+                    this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
+                    this.editing = null;
+                });
                 this.socket.on("deleteMessage", messageId =>  this.messages = this.messages.filter(message => message._id != messageId));
                 this.socket.on("typing", user => this.typing = user);
                 this.socket.on("stopTyping", () => this.typing = "");
@@ -145,11 +156,17 @@
                 this.newMessage = "";
                 this.newMessageError = false, this.submitting = false;
             },
+            enableEditing(messageId) { this.editing = messageId; },
+            disableEditing() { this.editing = null; },
+            editMessage(messageId, message) {
+                if(messageId && message) {
+                    this.socket.emit("editMessage", messageId, message);
+                }
+            },
             deleteMessage(messageId) {
                 this.socket.emit("deleteMessage", messageId);
             },
             isMyMessage(username) {
-                console.log(username);
                 if(username == this.username) {
                     return true;
                 } else {
@@ -180,6 +197,19 @@
                         this.joinChatroom();
                     }
                 }).catch(error => console.log(error));
+            },
+            openOverview() {
+                if(this.isAdmin) {
+                    this.$router.push("/admin/overview");
+                } else {
+                    this.$router.push("/overview");
+                }
+            },
+            openUsers() {
+                this.$router.push("/admin/users");
+            },
+            openProfile() {
+                this.$router.push("/profile");
             },
             logout() {
                 this.$store.dispatch("logout");
@@ -291,9 +321,9 @@
         float: left;
         color: #999;
     }
-    .deleteMessage {
-        margin-left: 5px;
+    .message .fas, .message .far {
         cursor: pointer;
+        margin-left: 5px;
     }
     .typing {
         margin-bottom: 10px;
@@ -304,6 +334,12 @@
     }
     .onlineUser {
         float: left;
+    }
+    .editMessage {
+        color: #008000;
+    }
+    .disableEditing {
+        color: #ff0000;
     }
     .onlineUserIcon {
         color: #008000;

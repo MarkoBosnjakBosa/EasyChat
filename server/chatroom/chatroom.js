@@ -64,6 +64,17 @@ module.exports = function(io, models, async, moment) {
                 }).catch(error => console.log(error));
             }
         });
+        socket.on("editMessage", (messageId, message) => {
+            if(messageId && message) {
+                var query = {_id: messageId};
+                var update = {message: message};
+                Message.findOneAndUpdate(query, update, {new: true}).then(message => {
+                    if(!isEmpty(message)) {
+                        io.emit("editMessage", message);
+                    }
+                }).catch(error => console.log(error));
+            }
+        });
         socket.on("deleteMessage", messageId => {
             var query = {_id: messageId};
             Message.findOneAndRemove(query).then(message => {
