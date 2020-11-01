@@ -59,11 +59,11 @@ module.exports = function(app, models) {
         }
     });
     app.put("/editPublicChatroom", (request, response) => {
-        var _id = request.body._id;
+        var id = request.body.id;
         var name = request.body.name;
         var icon = request.body.icon;
-        if(_id && name && icon) {
-            var query = {_id: _id};
+        if(id && name && icon) {
+            var query = {_id: id};
             var update = {name: name, icon: icon};
             Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
                 if(!isEmpty(publicChatroom)) {
@@ -80,9 +80,9 @@ module.exports = function(app, models) {
         }
     });
     app.delete("/deletePublicChatroom/:publicChatroomId", (request, response) => {
-        var _id = request.params.publicChatroomId;
-        if(_id) {
-            var query = {_id: _id};
+        var id = request.params.publicChatroomId;
+        if(id) {
+            var query = {_id: id};
             Chatroom.findOneAndRemove(query).then(publicChatroom => {
             if(!isEmpty(publicChatroom)) {
                 response.status(200).json({deleted: true});
@@ -98,11 +98,11 @@ module.exports = function(app, models) {
         }
     });
     app.put("/blockParticipant", (request, response) => {
-        var _id = request.body._id;
-        var participant = request.body.participant;
-        if(_id && participant) {
-            var query = {_id: _id};
-            var update = {$pull: {participants: participant}, $push: {blockedParticipants: participant}};
+        var publicChatroomId = request.body.publicChatroomId;
+        var username = request.body.username;
+        if(publicChatroomId && username) {
+            var query = {_id: publicChatroomId};
+            var update = {$pull: {participants: username}, $push: {blockedParticipants: username}};
             Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
                 if(!isEmpty(publicChatroom)) {
                     response.status(200).json({blocked: true, publicChatroom: publicChatroom});
@@ -118,11 +118,11 @@ module.exports = function(app, models) {
         }
     });
     app.put("/allowParticipant", (request, response) => {
-        var _id = request.body._id;
-        var participant = request.body.participant;
-        if(_id && participant) {
-            var query = {_id: _id};
-            var update = {$push: {participants: participant}, $pull: {blockedParticipants: participant}};
+        var publicChatroomId = request.body.publicChatroomId;
+        var username = request.body.username;
+        if(publicChatroomId && username) {
+            var query = {_id: publicChatroomId};
+            var update = {$push: {participants: username}, $pull: {blockedParticipants: username}};
             Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
                 if(!isEmpty(publicChatroom)) {
                     response.status(200).json({allowed: true, publicChatroom: publicChatroom});
@@ -138,12 +138,12 @@ module.exports = function(app, models) {
         }
     });
     app.put("/joinAvailableChatroom", (request, response) => {
-        var _id = request.body._id;
-        var participant = request.body.participant;
+        var availableChatroomId = request.body.availableChatroomId;
+        var username = request.body.username;
         var errorFields = ["availableChatroom"];
-        if(_id && participant) {
-            var query = {_id: _id};
-            var update = {$push: {participants: participant}};
+        if(availableChatroomId && username) {
+            var query = {_id: availableChatroomId};
+            var update = {$push: {participants: username}};
             Chatroom.findOneAndUpdate(query, update, {new: true}).then(availableChatroom => {
                 if(!isEmpty(availableChatroom)) {
                     response.status(200).json({joined: true, availableChatroom: availableChatroom});
@@ -159,11 +159,11 @@ module.exports = function(app, models) {
         }
     });
     app.put("/leavePublicChatroom", (request, response) => {
-        var _id = request.body._id;
-        var participant = request.body.username;
-        if(_id && participant) {
-            var query = {_id: _id};
-            var update = {$pull: {participants: participant}};
+        var publicChatroomId = request.body.publicChatroomId;
+        var username = request.body.username;
+        if(publicChatroomId && participant) {
+            var query = {_id: publicChatroomId};
+            var update = {$pull: {participants: username}};
             Chatroom.findOneAndUpdate(query, update, {new: true}).then(publicChatroom => {
                 if(!isEmpty(publicChatroom)) {
                     response.status(200).json({left: true});
@@ -221,17 +221,17 @@ module.exports = function(app, models) {
         }
     });
     app.delete("/deletePrivateChatroom/:privateChatroomId", (request, response) => {
-        var _id = request.params.privateChatroomId;
-        if(_id) {
-            var query = {_id: _id};
+        var privateChatroomId = request.params.privateChatroomId;
+        if(privateChatroomId) {
+            var query = {_id: privateChatroomId};
             Chatroom.findOneAndRemove(query).then(privateChatroom => {
-            if(!isEmpty(privateChatroom)) {
-                response.status(200).json({deleted: true});
-                response.end();
-            } else {
-                response.status(200).json({deleted: false});
-                response.end();
-            }
+                if(!isEmpty(privateChatroom)) {
+                    response.status(200).json({deleted: true});
+                    response.end();
+                } else {
+                    response.status(200).json({deleted: false});
+                    response.end();
+                }
             }).catch(error => console.log(error));
         } else {
             response.status(200).json({deleted: false});

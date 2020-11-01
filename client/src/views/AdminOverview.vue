@@ -214,7 +214,7 @@
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
                 if(updatedPublicChatroom.name != "" && updatedPublicChatroom.icon != "") {
-                    var body = {_id: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
+                    var body = {id: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editPublicChatroom", body).then(response => {
                         if(response.data.edited) {
                             this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);
@@ -232,8 +232,8 @@
                     }
                 }).catch(error => console.log(error));
             },
-            blockParticipant(publicChatroomId, participant) {
-                var body = {_id: publicChatroomId, participant: participant};
+            blockParticipant(publicChatroomId, username) {
+                var body = {publicChatroomId: publicChatroomId, username: username};
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/blockParticipant", body).then(response => {
                     if(response.data.blocked) {
                         var updatedPublicChatroom = response.data.publicChatroom;
@@ -241,8 +241,8 @@
                     }
                 }).catch(error => console.log(error));
             },
-            allowParticipant(publicChatroomId, participant) {
-                var body = {_id: publicChatroomId, participant: participant};
+            allowParticipant(publicChatroomId, username) {
+                var body = {publicChatroomId: publicChatroomId, username: username};
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/allowParticipant", body).then(response => {
                     if(response.data.allowed) {
                         var updatedPublicChatroom = response.data.publicChatroom;

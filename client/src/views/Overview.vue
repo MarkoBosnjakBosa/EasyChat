@@ -139,7 +139,7 @@
                     this.publicChatroomJoined = false;
                     return;
                 }
-                var body = {_id: this.availableChatroom, participant: this.username};
+                var body = {availableChatroomId: this.availableChatroom, username: this.username};
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/joinAvailableChatroom", body).then(response => {
                     if(response.data.joined) {
                         var newAvailableChatroom = response.data.availableChatroom;
@@ -157,7 +157,7 @@
                 }).catch(error => console.log(error));
             },
             leavePublicChatroom(publicChatroomId) {
-                var body = {_id: publicChatroomId, username: this.username};
+                var body = {publicChatroomId: publicChatroomId, username: this.username};
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/leavePublicChatroom", body).then(response => {
                     if(response.data.left) {
                         this.publicChatrooms = this.publicChatrooms.filter(publicChatroom => publicChatroom._id != publicChatroomId);

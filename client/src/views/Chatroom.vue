@@ -52,7 +52,7 @@
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" v-model="newMessage" ref="first" @focus="clearNewMessageStatus" @keypress="clearNewMessageStatus"/>
+                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus" @keypress="clearNewMessageStatus"/>
                                     </div>
                                     <div class="form-group col-md-1">
                                         <button type="submit" class="btn btn-primary">Send</button>
