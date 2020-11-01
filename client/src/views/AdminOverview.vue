@@ -5,9 +5,9 @@
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</a></li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + privateChatroom._id"><div class="privateChatroomType">{{privateChatroom.name}}</div></a><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><div class="privateChatroomType" @click="openChatroom(privateChatroom._id)">{{privateChatroom.name}}</div><i class="fas fa-times" @click="deletePrivateChatroom(privateChatroom._id)"></i></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -39,11 +39,11 @@
                         <h1>Chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError && publicSubmitting}" placeholder="Name" v-model="publicChatroom.name" ref="first" @focus="clearNameStatus" @keyPress="clearNameStatus">
+                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError && publicSubmitting}" placeholder="Name" v-model="publicChatroom.name" ref="first" @focus="clearNameStatus" @keyPress="clearNameStatus"/>
                                 <small v-if="nameError" class="form-text errorInput">Please provide a valid name!</small>
                             </div>
                             <div class="form-group col-md-5">
-                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && publicSubmitting}" placeholder="Icon" v-model="publicChatroom.icon" @focus="clearIconStatus" @keyPress="clearIconStatus">
+                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && publicSubmitting}" placeholder="Icon" v-model="publicChatroom.icon" @focus="clearIconStatus" @keyPress="clearIconStatus"/>
                                 <small v-if="iconError" class="form-text errorInput">Please provide a valid icon!</small>
                             </div>
                             <div class="form-group col-md-1">
@@ -290,6 +290,9 @@
             },
             goToProfile() {
                 this.$router.push("/profile");
+            },
+            openChatroom(chatroomId) {
+                this.$router.push("/chatroom/" + chatroomId);
             },
             logout() {
                 this.$store.dispatch("logout");

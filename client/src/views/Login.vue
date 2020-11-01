@@ -94,7 +94,7 @@
 						const token = response.data.token;
 						const user = response.data.user;
 						this.$store.dispatch("login", {token, user});
-						if(user.admin) {
+						if(user.isAdmin) {
 							this.$router.push({name: "AdminOverview"});
 						} else {
 							this.$router.push({name: "Overview"});

@@ -5,9 +5,9 @@
             <div class="heading">EasyChat</div>
             <ul class="list list-group-flush">
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom"><a :href="baseUrl + '/chatroom/' + publicChatroom._id"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</a></li>
+                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
                 <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom"><a :href="baseUrl + '/chatroom/' + privateChatroom._id">{{privateChatroom.name}}</a></li>
+                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom" @click="openChatroom(privateChatroom._id)"><div class="privateChatroomName">{{privateChatroom.name}}</div></li>
             </ul>
             </div>
             <div id="pageDiv">
@@ -19,12 +19,14 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Overview</a>
+                                <a class="nav-link" href="#" @click="goToOverview">Overview</a>
+                            </li>
+                            <li v-if="isAdmin" class="nav-item">
+                                <a class="nav-link" href="#" @click="goToUsers">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#">Users</a>
                                     <a class="dropdown-item" href="#">Profile</a>
                                     <a class="dropdown-item" href="#" @click="logout">Log out</a>
                                 </div>
@@ -39,7 +41,7 @@
                             <div class="form-group col-md-4">
                                 <div class="avatarDiv">
                                     <div id="previewAvatar">
-                                        <img :src="renderAvatar(user.avatar)" alt="Avatar" class="rounded-circle" width="100" height="100">
+                                        <img :src="renderAvatar()" alt="Avatar" class="rounded-circle" width="100" height="100">
                                     </div>
                                     <div class="avatarWrapper">
                                         <button class="avatarUpload" :class="{'errorField' : avatarError && userSubmitting}">Upload avatar <i class="fas fa-upload"></i></button>
@@ -50,17 +52,17 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <div class="form-group">
-                                    <input type="text" id="username" class="form-control" :placeholder="user.username" disabled>
+                                    <input type="text" id="username" class="form-control" :placeholder="user.username" disabled/>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" id="email" class="form-control" :placeholder="user.email" disabled>
+                                    <input type="text" id="email" class="form-control" :placeholder="user.email" disabled/>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && userSubmitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus" @keypress="clearFirstNameStatus">
+                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && userSubmitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus" @keypress="clearFirstNameStatus"/>
                                     <small v-if="firstNameError && userSubmitting" class="form-text errorInput">Please provide a valid first name!</small>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && userSubmitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus" @keypress="clearLastNameStatus">
+                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && userSubmitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus" @keypress="clearLastNameStatus"/>
                                     <small v-if="lastNameError && userSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
                                 </div>
                                 <div v-if="userEdited" class="editSuccessful">
@@ -77,7 +79,7 @@
                         <h1>Reset password:</h1>
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && passwordSubmitting}" placeholder="Password" v-model="password" @focus="clearPasswordStatus" @keypress="clearPasswordStatus">
+                                <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && passwordSubmitting}" placeholder="Password" v-model="password" @focus="clearPasswordStatus" @keypress="clearPasswordStatus"/>
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && passwordSubmitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
                                 </div>
@@ -108,6 +110,7 @@
         data() {
             return {
                 username: "",
+                isAdmin: false,
                 publicChatrooms: [],
                 privateChatrooms: [],
                 userSubmitting: false,
@@ -133,6 +136,7 @@
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
                 this.username = this.$store.getters.getUser.username;
+                this.isAdmin = this.$store.getters.getUser.isAdmin;
                 this.checkStatus();
             },
             getChatrooms() {
@@ -146,8 +150,12 @@
                     this.user = response.data.user;
                 }).catch(error => console.log(error));
             },
-            renderAvatar(avatar) {
-                return "data:" + avatar.contentType + ";base64," + (new Buffer.from(avatar.image)).toString("base64");
+            renderAvatar() {
+                if(this.user.avatar && !(this.user.avatar instanceof File)) {
+                    return "data:" + this.user.avatar.contentType + ";base64," + (new Buffer.from(this.user.avatar.image)).toString("base64");
+                } else {
+                    return null;
+                }
             },
             editUser() {
                 this.userSubmitting = true;
@@ -212,6 +220,19 @@
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
+            goToOverview() {
+                if(this.isAdmin) {
+                    this.$router.push("/admin/overview");
+                } else {
+                    this.$router.push("/overview");
+                }
+            },
+            goToUsers() {
+                this.$router.push("/admin/users");
+            },
+            openChatroom(chatroomId) {
+                this.$router.push("/chatroom/" + chatroomId);
+            },
             logout() {
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
@@ -226,7 +247,7 @@
             selectAvatar(event) {
 				this.userSubmitting = false;
 				var files = event.target.files;
-				var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
+                var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
 				if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
 					var file = files[0];
 					var reader = new FileReader();
@@ -240,7 +261,7 @@
 				} else {
 					this.avatarError = true;
 					this.userSubmitting = true;
-				}
+                }
             },
             togglePassword() {
                 var type = document.getElementById("password").getAttribute("type");

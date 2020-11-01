@@ -52,7 +52,7 @@ li .fa-times {
 .fas.fa-angle-double-up, .fas.fa-angle-double-down {
     cursor: pointer;
 }
-.publicChatroom {
+.publicChatroom, .privateChatroomName {
     cursor: pointer;
 }
 .hiddenPublicChatroom, .hiddenPrivateChatroom {
