@@ -51,16 +51,18 @@ module.exports = function(io, models, async, moment) {
             socket.to(chatroomId).broadcast.emit("userOnline", user);
         });
         socket.on("newMessage", (chatroomId, message) => {
-            var dateFormat = "DD.MM.YYYY HH:mm";
-            var date = moment().format(dateFormat);
-            var username = chatrooms[chatroomId].users[socket.id];
-            var query = {username: username};
-            User.findOne(query).then(user => {
-                var newMessage = getMessageScheme(Message, chatroomId, username, user.avatar, message, date);
-                newMessage.save().then(message => {
-                    io.emit("newMessage", message);
+            if(message) {
+                var dateFormat = "DD.MM.YYYY HH:mm";
+                var date = moment().format(dateFormat);
+                var username = chatrooms[chatroomId].users[socket.id];
+                var query = {username: username};
+                User.findOne(query).then(user => {
+                    var newMessage = getMessageScheme(Message, chatroomId, username, user.avatar, message, date);
+                    newMessage.save().then(message => {
+                        io.emit("newMessage", message);
+                    }).catch(error => console.log(error));
                 }).catch(error => console.log(error));
-            }).catch(error => console.log(error));
+            }
         });
         socket.on("typing", username => socket.broadcast.emit("typing", username));
         socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));

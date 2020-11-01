@@ -49,7 +49,7 @@
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input type="text" id="newMessage" class="form-control" v-model="newMessage"/>
+                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" v-model="newMessage" ref="first" @focus="clearNewMessageStatus" @keypress="clearNewMessageStatus"/>
                                     </div>
                                     <div class="form-group col-md-1">
                                         <button type="submit" class="btn btn-primary">Send</button>
@@ -89,6 +89,8 @@
                 messages: [],
                 onlineUsers: {},
                 currentChatroom: "",
+                submitting: false,
+                newMessageError: false,
                 newMessage: "",
                 typing: "",
                 publicChatrooms: [],
@@ -127,9 +129,16 @@
                 this.socket.on("stopTyping", () => this.typing = "");
             },
             sendMessage() {
-                if(!this.newMessage) return;
+                this.submitting = true;
+                this.clearNewMessageStatus();
+                if(this.invalidNewMessage) {
+                    this.newMessageError = true;
+                    return;
+                }
                 this.socket.emit("newMessage", this.chatroomId, this.newMessage);
+                this.$refs.first.focus();
                 this.newMessage = "";
+                this.newMessageError = false, this.submitting = false;
             },
             isMyMessage(username) {
                 if(username == this.username) {
@@ -167,6 +176,7 @@
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
             },
+            clearNewMessageStatus() { this.newMessageError = false; },
             toggleChatrooms(type) {
                 if(type == "public") {
                     var publicChatrooms = document.querySelectorAll(".publicChatroom");
@@ -217,6 +227,9 @@
                     this.socket.emit("stopTyping");
                 }
             }
+        },
+        computed: {
+            invalidNewMessage() { return this.newMessage === ""; }
         },
         created() {
             this.isLoggedIn();
@@ -282,5 +295,9 @@
     .onlineUserIcon {
         color: #008000;
         margin-left: 5px;
+    }
+    .errorField {
+        border: 1px solid #ff0000;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
     }
 </style>
