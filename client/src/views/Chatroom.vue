@@ -39,21 +39,68 @@
                     <div class="form-row">
                         <div class="col-md-8">
                             <div v-if="!messages.length" class="message">
-                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="avatar">
-                                <p>No messages yet...</p>
-                                <span class="dataRight">Bot {{renderCurrentDate()}}</span>
+                                 <div class="card">
+                                    <div class="card-header">
+                                        <span>Bot {{renderDate(message.date)}}</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-1">
+                                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                            </div>
+                                            <div class="col-sm-11">
+                                                <span>No messages yet...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div v-for="message in messages" v-bind:key="message._id" class="message" :class="{'myMessage': isMyMessage(message.username)}">
-                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="avatar" :class="{'right': isMyMessage(message.username)}">
-                                <p v-if="isMyMessage(message.username) && editing == message._id">
-                                    <input type="text" class="form-control" v-model="message.message"/>
-                                    <i class="far fa-check-circle editMessage" @click="editMessage(message._id, message.message)"></i>
-                                    <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
-                                </p>
-                                <p v-else>{{message.message}}</p>
-                                <span :class="isMyMessage(message.username) ? 'dataLeft' : 'dataRight'">{{message.username + ' ' + renderDate(message.date)}}</span>
-                                <i v-if="isMyMessage(message.username) && editing != message._id" class="fas fa-pencil-alt" @click="enableEditing(message._id)"></i>
-                                <i v-if="isMyMessage(message.username) && editing != message._id" class="fas fa-times-circle" @click="deleteMessage(message._id)"></i>
+                            <div v-for="message in messages" v-bind:key="message._id" class="" :class="{'myMessage': isMyMessage(message.username)}">
+                                <div v-if="isMyMessage(message.username)" class="card">
+                                    <div class="card-header">
+                                        <span>{{message.username + ' ' + renderDate(message.date)}}</span>
+                                        <div v-if="editing != message._id" class="actionButtons">
+                                            <i class="fas fa-pencil-alt" @click="enableEditing(message._id)"></i>
+                                            <i class="fas fa-times-circle" @click="deleteMessage(message._id)"></i>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div v-if="editing == message._id" class="col-sm-11">
+                                                <div class="row">
+                                                    <div class="col-sm-11 editMessage">
+                                                        <input type="text" class="form-control" v-model="message.message"/>
+                                                    </div>
+                                                    <div class="col-sm-1 editButtons">
+                                                        <i class="far fa-check-circle editMessage" @click="editMessage(message._id, message.message)"></i>
+                                                        <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div v-else class="col-sm-11">
+                                                <span>{{message.message}}</span>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="card">
+                                    <div class="card-header">
+                                        <span>{{message.username + ' ' + renderDate(message.date)}}</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-1">
+                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                            </div>
+                                            <div class="col-sm-11">
+                                                <span>{{message.message}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
@@ -284,46 +331,25 @@
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    .message {
-        border: 2px solid #dedede;
-        background-color: #f1f1f1;
-        border-radius: 5px;
-        padding: 10px;
-        margin: 10px 0;
+    .card {
+        margin-bottom: 10px;
     }
-    .myMessage {
-        border-color: #ccc;
-        background-color: #ddd;
+    .editMessage {
+        padding-right: 0px;
     }
-    .message::after {
-        content: "";
-        clear: both;
-        display: table;
+    .editButtons {
+        padding-left: 0px;
+        padding-right: 0px;
     }
-    .message .avatar {
-        float: left;
-        max-width: 60px;
-        width: 50px;
-        height: 50px;
-        margin-right: 20px;
-        border-radius: 50%;
-    }
-    .message .avatar.right {
-        float: right;
-        margin-left: 20px;
-        margin-right:0;
-    }
-    .dataRight {
-        float: right;
-        color: #aaa;
-    }
-    .dataLeft {
-        float: left;
-        color: #999;
-    }
-    .message .fas, .message .far {
+    .card-header .fas, .card-header .far, .card-body .fas, .card-body .far {
         cursor: pointer;
         margin-left: 5px;
+    }
+    .actionButtons {
+        float: right;
+    }
+    .card-body .fas, .card-body .far {
+        padding-top: 10px;
     }
     .typing {
         margin-bottom: 10px;
