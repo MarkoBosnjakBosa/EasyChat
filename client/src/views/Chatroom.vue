@@ -41,7 +41,7 @@
                             <div v-if="!messages.length" class="message">
                                  <div class="card">
                                     <div class="card-header">
-                                        <span>Bot {{renderDate(message.date)}}</span>
+                                        <span>Bot {{renderDate("")}}</span>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -224,19 +224,20 @@
                 return "data:" + avatar.contentType + ";base64," + (new Buffer.from(avatar.image)).toString("base64");
             },
             renderDate(date) {
-                var dateAndTime = date.split(" ");
-                var temporaryDateArray = dateAndTime[0].split(".");
-                var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
-                var parsedDate = moment(temporaryDate);
-                var currentDate = moment().startOf("day");
-                if(parsedDate.isBefore(currentDate)) {
-                    return dateAndTime[0];
+                if(date) {
+                    var dateAndTime = date.split(" ");
+                    var temporaryDateArray = dateAndTime[0].split(".");
+                    var temporaryDate = temporaryDateArray[2] + "-" + temporaryDateArray[1] + "-" + temporaryDateArray[0];
+                    var parsedDate = moment(temporaryDate);
+                    var currentDate = moment().startOf("day");
+                    if(parsedDate.isBefore(currentDate)) {
+                        return dateAndTime[0];
+                    } else {
+                        return dateAndTime[1];
+                    }
                 } else {
-                    return dateAndTime[1];
+                    return moment().format("HH:mm");
                 }
-            },
-            renderCurrentDate() {
-                return moment().format("HH:mm");
             },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
@@ -333,6 +334,9 @@
     }
     .card {
         margin-bottom: 10px;
+    }
+    .card-header, .card-body {
+        padding: 10px;
     }
     .editMessage {
         padding-right: 0px;
