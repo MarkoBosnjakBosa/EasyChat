@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const cron = require("node-cron");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
@@ -35,6 +36,7 @@ const overview = require("./routes/overview.js")(app, models);
 const chatroom = require("./chatroom/chatroom.js")(io, models, async, moment);
 const users = require("./routes/users.js")(app, models, async, fs, path);
 const profile = require("./routes/profile.js")(app, models, multer, fs, path);
+const cronJob = require("./cronJob/cronJob.js")(cron, models, fs, moment, transporter, emailUser);
 
 mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const database = mongoose.connection;
