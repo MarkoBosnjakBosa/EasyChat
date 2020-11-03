@@ -115,6 +115,7 @@
                             </form>
                         </div>
                         <div class="col-md-4">
+                            <button type="button" class="btn btn-info" @click="scrollDown()">Scroll down <i class="fas fa-arrow-down"></i></button>
                             <h1>Online: </h1>
                             <ul class="onlineUsers">
                                 <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
@@ -238,6 +239,9 @@
                 } else {
                     return moment().format("HH:mm");
                 }
+            },
+            scrollDown() {
+                window.scroll({top: document.body.scrollHeight, behavior: "smooth"});
             },
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => {
