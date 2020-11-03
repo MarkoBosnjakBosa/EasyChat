@@ -12,7 +12,8 @@
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <button id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" class="btn btn-info scrollDown" @click="scrollDown()"><i class="fas fa-arrow-down"></i></button>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -115,8 +116,7 @@
                             </form>
                         </div>
                         <div class="col-md-4">
-                            <button type="button" class="btn btn-info" @click="scrollDown()">Scroll down <i class="fas fa-arrow-down"></i></button>
-                            <h1>Online: </h1>
+                            <h1>Online:</h1>
                             <ul class="onlineUsers">
                                 <li v-for="onlineUser in onlineUsers" :key="onlineUser"><div class="onlineUser">{{onlineUser}}</div><i class="fas fa-circle onlineUserIcon"></i></li>
                             </ul>
@@ -335,6 +335,9 @@
         text-align: center;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .scrollDown {
+        margin-left: 10px;
     }
     .card {
         margin-bottom: 10px;
