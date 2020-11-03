@@ -6,8 +6,11 @@
   "scripts": {
     "watch": "nodemon ./app.js"
   },
-  "author": "Marko Bosnjak",
+  "author": "Marko Bošnjak",
   "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
   "dependencies": {
     "async": "^3.2.0",
     "bcryptjs": "^2.4.3",
@@ -18,14 +21,11 @@
     "file-system": "^2.2.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.10.9",
+    "mongoose": "^5.10.11",
     "multer": "^1.4.2",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.14",
     "path": "^0.12.7",
     "socket.io": "^2.3.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.6"
   }
 }
