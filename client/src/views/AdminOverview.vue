@@ -193,7 +193,7 @@
                     this.publicChatroomCreated = false;
                     return;
                 }
-                var body = {name: this.publicChatroom.name, icon: this.publicChatroom.icon};
+                var body = {username: this.username, name: this.publicChatroom.name, icon: this.publicChatroom.icon};
                 axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/createPublicChatroom", body).then(response => {
                     if(response.data.created) {
                         var newPublicChatroom = response.data.publicChatroom;

@@ -2,7 +2,7 @@ module.exports = function(cron, models, fs, moment, transporter, emailUser) {
     const User = models.User;
     cron.schedule("0 0 * * 1", function() {
         var stream = fs.createWriteStream("./logs/logs.md", {flags:"a"});
-        var query = {};
+        var query = {newsletters: true};
         User.find(query).then(users => {
             users.forEach(user => {
                 sendNewsletterEmail(user.email, user.firstName);

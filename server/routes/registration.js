@@ -68,12 +68,13 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 					response.status(200).json(error);
 					response.end();
 				} else {
+					var newsletters = true;
 					var acceptance = false;
 					var isAdmin = false;
 					var avatarImage = fs.readFileSync(avatar.path);
           			var encodedAvatarImage = avatarImage.toString("base64");
 					var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
-					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, acceptance, isAdmin);
+					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, newsletters, acceptance, isAdmin);
 					bcryptjs.genSalt(10, (error, salt) => {
 						bcryptjs.hash(newUser.password, salt, (error, hash) => {
 							newUser.password = hash;
@@ -104,8 +105,8 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		}).catch(error => console.log(error));
 	});
 
-	function getUserScheme(User, username, email, password, firstName, lastName, avatar, acceptance, isAdmin) {
-		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, acceptance: acceptance, isAdmin: isAdmin});
+	function getUserScheme(User, username, email, password, firstName, lastName, avatar, newsletters, acceptance, isAdmin) {
+		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, newsletters: newsletters, acceptance: acceptance, isAdmin: isAdmin});
 	}
 	function sendConfirmationEmail(username, email, firstName) {
 		var mailOptions = {

@@ -50,22 +50,32 @@
                                     <small v-if="avatarError && userSubmitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-8">
                                 <div class="form-group">
+                                    <label for="username">Username:</label>
                                     <input type="text" id="username" class="form-control" :placeholder="user.username" disabled/>
                                 </div>
                                 <div class="form-group">
+                                    <label for="email">Email:</label>
                                     <input type="text" id="email" class="form-control" :placeholder="user.email" disabled/>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && userSubmitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus" @keypress="clearFirstNameStatus"/>
+                                    <label for="firstName">First name:</label>
+                                    <input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && userSubmitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
                                     <small v-if="firstNameError && userSubmitting" class="form-text errorInput">Please provide a valid first name!</small>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && userSubmitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus" @keypress="clearLastNameStatus"/>
+                                    <label for="lastName">Last name:</label>
+                                    <input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && userSubmitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
                                     <small v-if="lastNameError && userSubmitting" class="form-text errorInput">Please provide a valid last name!</small>
                                 </div>
-                                <div v-if="userEdited" class="editSuccessful">
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="newsletters" class="form-check-input" v-model="user.newsletters" @click="clearNewslettersStatus()">
+                                        <label for="newsletters" class="form-check-label">Newsletters</label>
+                                    </div>
+                                </div>
+                                <div v-if="userEdited" class="form-group editSuccessful">
                                     <div>Personal information have been successfully edited!</div>
                                 </div>
                                 <div class="form-group submitButton">
@@ -78,7 +88,7 @@
                         <h1>Reset password:</h1>
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && passwordSubmitting}" placeholder="Password" v-model="password" @focus="clearPasswordStatus" @keypress="clearPasswordStatus"/>
+                                <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && passwordSubmitting}" placeholder="Password" v-model="password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && passwordSubmitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
                                 </div>
@@ -121,7 +131,8 @@
 					email: "",
 					firstName: "",
 					lastName: "",
-					avatar: ""
+                    avatar: "",
+                    newsletters: false
 				},
                 userEdited: false,
                 passwordSubmitting: false,
@@ -183,6 +194,7 @@
 				formData.append("firstName", this.user.firstName);
 				formData.append("lastName", this.user.lastName);
                 formData.append("avatar", this.user.avatar);
+                formData.append("newsletters", this.user.newsletters);
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editUser", formData).then(response => {
                     if(response.data.edited) {
                         this.userEdited = true;
@@ -246,6 +258,9 @@
             },
             clearAvatarStatus() { 
                 this.avatarError = false;
+                this.userEdited = false;
+            },
+            clearNewslettersStatus() {
                 this.userEdited = false;
             },
             clearPasswordStatus() { 

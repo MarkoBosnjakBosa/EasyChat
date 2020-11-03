@@ -50,6 +50,7 @@ module.exports = function(app, models, multer, fs, path) {
 			allowEdit = false;
 		}
 		if(allowEdit) {
+            var newsletters = request.body.newsletters;
             var query = {username: username};
             var update = {};
             var removeOldAvatar = false;
@@ -57,10 +58,10 @@ module.exports = function(app, models, multer, fs, path) {
                 var avatarImage = fs.readFileSync(avatar.path);
                 var encodedAvatarImage = avatarImage.toString("base64");
                 var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
-                update = {firstName: firstName, lastName: lastName, avatar: avatarObject};
+                update = {firstName: firstName, lastName: lastName, avatar: avatarObject, newsletters: newsletters};
                 removeOldAvatar = true;
             } catch(error) {
-                update = {firstName: firstName, lastName: lastName};
+                update = {firstName: firstName, lastName: lastName, newsletters: newsletters};
             }
 			User.findOneAndUpdate(query, update).then(user => {
                 if(removeOldAvatar) {

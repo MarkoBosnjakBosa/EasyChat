@@ -46,7 +46,8 @@ module.exports = function(app, models) {
         }
         if(allowCreation) {
             var type = "public";
-            var participants = ["admin"];
+            var username = request.body.username;
+            var participants = [username];
             var blockedParticipants = [];
             var newPublicChatroom = getChatroomScheme(Chatroom, name, icon, type, participants, blockedParticipants);
             newPublicChatroom.save().then(publicChatroom => {
