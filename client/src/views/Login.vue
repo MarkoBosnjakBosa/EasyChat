@@ -1,14 +1,14 @@
 <template>
 	<div id="login" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="loginUser">
+		<form autocomplete="off" @submit.prevent="loginUser()">
 			<h1>Login</h1>
 			<div class="form-group">
-				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" ref="first" @keyup="checkUsername" @change="checkUsername" @input="checkUsername"/>
+				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" ref="first" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
 				<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
-					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus" @keypress="clearPasswordStatus"/>
+					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 					<div class="input-group-append">
 						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
 					</div>
@@ -16,16 +16,16 @@
 				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 			</div>
 			<div class="form-group forgotPasswordDiv">
-				<a href="#" @click="forgotPassword">Forgot password?</a>
+				<a href="#" @click="forgotPassword()">Forgot password?</a>
 				<br/>
-				<a href="#" @click.prevent="forgotUsername">Forgot username?</a>
+				<a href="#" @click="forgotUsername()">Forgot username?</a>
 			</div>
 			<div v-if="passwordMatch" class="loginFailed">Password does not match!</div>
-				<div class="form-group submitDiv">
-					<button type="submit" class="btn btn-primary submitButton">Log in</button>
-				</div>
+			<div class="form-group submitDiv">
+				<button type="submit" class="btn btn-primary submitButton">Log in</button>
+			</div>
 			<div class="form-group registerDiv">
-				Not a member? <a href="#" @click.prevent="register">Register</a>
+				Not a member? <a href="#" @click="register()">Register</a>
 			</div>
 		</form>
 	</div>

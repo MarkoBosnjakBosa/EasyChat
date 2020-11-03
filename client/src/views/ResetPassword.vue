@@ -1,12 +1,12 @@
 <template>
 	<div id="resetPassword" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="resetPassword">
+		<form autocomplete="off" @submit.prevent="resetPassword()">
 			<h1>Reset password</h1>
 			<div class="form-group">
 				<div class="input-group">
-					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" ref="first" @focus="clearPasswordStatus" @keypress="clearPasswordStatus">
+					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" ref="first" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 					<div class="input-group-append">
-						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
+						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 					</div>
 				</div>
 				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
@@ -15,10 +15,10 @@
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
+			<div class="loginDiv">
+				<a class="btn btn-info" role="button" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+			</div>
 		</form>
-		<div class="loginDiv">
-			<a class="btn btn-info" role="button" @click.prevent="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
-		</div>
 	</div>
 </template>
 

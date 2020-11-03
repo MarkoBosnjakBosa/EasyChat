@@ -19,23 +19,23 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="openOverview">Overview</a>
+                                <a class="nav-link" href="#" @click="openOverview()">Overview</a>
                             </li>
                             <li v-if="isAdmin" class="nav-item">
-                                <a class="nav-link" href="#" @click="openUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers()">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
                                     <a class="dropdown-item" href="#">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </nav>
                 <div class="personalInformation">
-                    <form autocomplete="off" @submit.prevent="editUser" enctype="multipart/form-data">
+                    <form autocomplete="off" @submit.prevent="editUser()" enctype="multipart/form-data">
                         <h1>Personal information:</h1>
                         <div class="form-row">
                             <div class="form-group col-md-4">
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="avatarWrapper">
                                         <button class="avatarUpload" :class="{'errorField' : avatarError && userSubmitting}">Upload avatar <i class="fas fa-upload"></i></button>
-                                        <input type="file" id="avatar" @change="selectAvatar"/>
+                                        <input type="file" id="avatar" @change="selectAvatar()"/>
                                     </div>
                                     <small v-if="avatarError && userSubmitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
                                 </div>
@@ -75,29 +75,25 @@
                                         <label for="newsletters" class="form-check-label">Newsletters</label>
                                     </div>
                                 </div>
-                                <div v-if="userEdited" class="form-group editSuccessful">
-                                    <div>Personal information have been successfully edited!</div>
-                                </div>
+                                <div v-if="userEdited" class="form-group editSuccessful">Personal information have been successfully edited!</div>
                                 <div class="form-group submitButton">
                                     <button type="submit" class="btn btn-primary">Edit</button>
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <form class="resetPassword" autocomplete="off" @submit.prevent="resetPassword">
+                    <form class="resetPassword" autocomplete="off" @submit.prevent="resetPassword()">
                         <h1>Reset password:</h1>
                         <div class="form-group">
                             <div class="input-group">
                                 <input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && passwordSubmitting}" placeholder="Password" v-model="password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && passwordSubmitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
+                                    <button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && passwordSubmitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
                                 </div>
                             </div>
                             <small v-if="passwordError && passwordSubmitting" class="form-text errorInput">Please provide a valid password!</small>
                         </div>
-                        <div v-if="passwordReset" class="resetSuccessful">
-                            <div>Your password has been successfully reset!</div>
-                        </div>
+                        <div v-if="passwordReset" class="form-group resetSuccessful">Your password has been successfully reset!</div>
                         <div class="form-group submitButton">
                             <button type="submit" class="btn btn-primary">Reset</button>
                         </div>

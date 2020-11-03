@@ -19,16 +19,16 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="openOverview">Overview</a>
+                                <a class="nav-link" href="#" @click="openOverview()">Overview</a>
                             </li>
                             <li v-if="isAdmin" class="nav-item">
-                                <a class="nav-link" href="#" @click="openUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers()">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="openProfileProfile">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>
@@ -103,10 +103,10 @@
                                 </div>
                             </div>
                             <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
-                            <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage">
+                            <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage()">
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus" @keypress="clearNewMessageStatus"/>
+                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
                                     </div>
                                     <div class="form-group col-md-1">
                                         <button type="submit" class="btn btn-primary">Send</button>

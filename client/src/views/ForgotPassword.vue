@@ -1,12 +1,12 @@
 <template>
 	<div id="forgotPassword" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="forgotPassword">
+		<form autocomplete="off" @submit.prevent="forgotPassword()">
 			<h1>Forgot password</h1>
 			<div class="form-group">
-				<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" placeholder="Email" v-model="email" ref="first" @focus="clearEmailStatus" @keypress="clearEmailStatus"/>
+				<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" placeholder="Email" v-model="email" ref="first" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
 				<small v-if="emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
 			</div>
-			<div v-if="emailSent" class="emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
+			<div v-if="emailSent" class="form-group emailSentSuccessful">Please visit your inbox and follow suggested steps!</div>
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>

@@ -19,7 +19,7 @@
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="openOverview">Overview</a>
+                                <a class="nav-link" href="#" @click="openOverview()">Overview</a>
                             </li>
                             <li class="nav-item active">
                                 <a class="nav-link" href="#">Users</a>
@@ -27,8 +27,8 @@
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="openProfile">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>

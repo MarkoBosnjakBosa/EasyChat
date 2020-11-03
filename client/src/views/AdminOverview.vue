@@ -22,35 +22,35 @@
                                 <a class="nav-link" href="#">Overview</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click="openUsers">Users</a>
+                                <a class="nav-link" href="#" @click="openUsers()">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="openProfile">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </nav>
                 <div id="publicChatroom">
-                    <form autocomplete="off" @submit.prevent="createPublicChatroom">
+                    <form autocomplete="off" @submit.prevent="createPublicChatroom()">
                         <h1>Chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError && publicSubmitting}" placeholder="Name" v-model="publicChatroom.name" ref="first" @focus="clearNameStatus" @keyPress="clearNameStatus"/>
+                                <input type="text" id="name" class="form-control" :class="{'errorField' : nameError && publicSubmitting}" placeholder="Name" v-model="publicChatroom.name" ref="first" @focus="clearNameStatus()" @keyPress="clearNameStatus()"/>
                                 <small v-if="nameError" class="form-text errorInput">Please provide a valid name!</small>
                             </div>
                             <div class="form-group col-md-5">
-                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && publicSubmitting}" placeholder="Icon" v-model="publicChatroom.icon" @focus="clearIconStatus" @keyPress="clearIconStatus"/>
+                                <input type="text" id="icon" class="form-control" :class="{'errorField' : iconError && publicSubmitting}" placeholder="Icon" v-model="publicChatroom.icon" @focus="clearIconStatus()" @keyPress="clearIconStatus()"/>
                                 <small v-if="iconError" class="form-text errorInput">Please provide a valid icon!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </div>
-                        <div v-if="publicChatroomCreated" class="creationSuccessful">Chatroom has been successfully created!</div>
+                        <div v-if="publicChatroomCreated" class="form-group creationSuccessful">Chatroom has been successfully created!</div>
                     </form>
                 </div>
                 <table class="table">
@@ -73,7 +73,7 @@
                             <td v-else><i :class="publicChatroom.icon"></i></td>
                             <td v-if="editing == publicChatroom._id" class="padded">
                                 <ul>
-                                    <li v-for="participant in publicChatroom.participants" :key="participant">{{participant}}<i class="fas fa-ban blockUser" @click="blockParticipant(publicChatroom._id, participant)"></i></li>
+                                    <li v-for="participant in publicChatroom.participants.filter(userParticipant => userParticipant != username)" :key="participant">{{participant}}<i class="fas fa-ban blockUser" @click="blockParticipant(publicChatroom._id, participant)"></i></li>
                                 </ul>
                             </td>
                             <td v-else>{{publicChatroom.participants.join(", ")}}</td>
@@ -100,7 +100,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus" @keypress="clearAvailableUserStatus">
+                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus()" @keypress="clearAvailableUserStatus()">
                                     <option value="" disabled selected>Select user...</option>
                                     <option v-for="availableUser in availableUsers" :key="availableUser" :value="availableUser">{{availableUser}}</option>
                                 </select>
@@ -112,9 +112,7 @@
                         </div>
                         <div v-if="privateChatroomCreated" class="form-row">
                             <div class="form-group col-md-3"></div>
-                            <div class="form-group col-md-6">
-                                <div class="creationSuccessful">Private chatroom has been successfully created!</div>
-                            </div>
+                            <div class="form-group col-md-6 creationSuccessful">Private chatroom has been successfully created!</div>
                         </div>  
                     </form>
                 </div>

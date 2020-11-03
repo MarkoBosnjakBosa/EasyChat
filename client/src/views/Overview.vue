@@ -37,7 +37,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="availableChatroom" class="form-control" :class="{'errorField' : availableChatroomError && publicSubmitting}" v-model="availableChatroom" @focus="clearAvailableChatroomStatus" @keypress="clearAvailableChatroomStatus">
+                                <select id="availableChatroom" class="form-control" :class="{'errorField' : availableChatroomError && publicSubmitting}" v-model="availableChatroom" @focus="clearAvailableChatroomStatus()" @keypress="clearAvailableChatroomStatus()">
                                     <option value="" disabled selected>Select chatroom...</option>
                                     <option v-for="availableChatroom in availableChatrooms" :key="availableChatroom._id" :value="availableChatroom._id">{{availableChatroom.name}}</option>
                                 </select>
@@ -61,7 +61,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus" @keypress="clearAvailableUserStatus">
+                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus()" @keypress="clearAvailableUserStatus()">
                                     <option value="" disabled selected>Select user...</option>
                                     <option v-for="availableUser in availableUsers" :key="availableUser" :value="availableUser">{{availableUser}}</option>
                                 </select>
@@ -74,7 +74,7 @@
                         <div v-if="privateChatroomCreated" class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-6">
-                                <div class="creationSuccessful">Private chatroom has been successfully created!</div>
+                                <div class="form-group creationSuccessful">Private chatroom has been successfully created!</div>
                             </div>
                         </div>  
                     </form>

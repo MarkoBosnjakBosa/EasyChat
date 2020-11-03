@@ -1,6 +1,6 @@
 <template>
 	<div id="registration" class="container-fluid">
-		<form autocomplete="off" @submit.prevent="createUser" enctype="multipart/form-data">
+		<form autocomplete="off" @submit.prevent="createUser()" enctype="multipart/form-data">
 			<h1>Register</h1>
 			<div class="form-row">
 				<div class="form-group col-md-4">
@@ -10,43 +10,43 @@
 						</div>
 						<div class="avatarWrapper">
 							<button class="avatarUpload" :class="{'errorField' : avatarError && submitting}">Upload avatar <i class="fas fa-upload"></i></button>
-							<input type="file" id="avatar" @change="selectAvatar"/>
+							<input type="file" id="avatar" @change="selectAvatar()"/>
 						</div>
 						<small v-if="avatarError && submitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
 					</div>
 				</div>
 				<div class="form-group col-md-6">
 					<div class="form-group">
-						<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" placeholder="Username" v-model="user.username" ref="first" @focus="clearUsernameStatus" @keypress="clearUsernameStatus">
+						<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" placeholder="Username" v-model="user.username" ref="first" @focus="clearUsernameStatus()" @keypress="clearUsernameStatus()"/>
 						<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
 					</div>
 					<div class="form-group">
-						<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" placeholder="Email" v-model="user.email" @focus="clearEmailStatus" @keypress="clearEmailStatus">
+						<input type="text" id="email" class="form-control" :class="{'errorField' : emailError && submitting}" placeholder="Email" v-model="user.email" @focus="clearEmailStatus()" @keypress="clearEmailStatus()"/>
 						<small v-if="emailError && submitting" class="form-text errorInput">Please provide a valid email!</small>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
-							<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus" @keypress="clearPasswordStatus">
+							<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 							<div class="input-group-append">
-								<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
+								<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 							</div>
 						</div>
 						<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 					</div>
 					<div class="form-group">
-						<input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && submitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus" @keypress="clearFirstNameStatus">
+						<input type="text" id="firstName" class="form-control" :class="{'errorField' : firstNameError && submitting}" placeholder="First name" v-model="user.firstName" @focus="clearFirstNameStatus()" @keypress="clearFirstNameStatus()"/>
 						<small v-if="firstNameError && submitting" class="form-text errorInput">Please provide a valid first name!</small>
 					</div>
 					<div class="form-group">
-						<input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && submitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus" @keypress="clearLastNameStatus">
+						<input type="text" id="lastName" class="form-control" :class="{'errorField' : lastNameError && submitting}" placeholder="Last name" v-model="user.lastName" @focus="clearLastNameStatus()" @keypress="clearLastNameStatus()"/>
 						<small v-if="lastNameError && submitting" class="form-text errorInput">Please provide a valid last name!</small>
 					</div>
-					<div v-if="userCreated" class="creationSuccessful">
+					<div v-if="userCreated" class="form-group creationSuccessful">
 						<div>User has been successfully created!</div>
 						<div>Please visit your inbox and confirm your registration!</div>
 					</div>
-					<div v-if="alreadyExists == 'username'" class="creationFailed">Username already exists!</div>
-					<div v-if="alreadyExists == 'email'" class="creationFailed">Email already exists!</div>
+					<div v-if="alreadyExists == 'username'" class="form-group creationFailed">Username already exists!</div>
+					<div v-if="alreadyExists == 'email'" class="from-group creationFailed">Email already exists!</div>
 					<div class="form-group">
 						<button type="submit" class="btn btn-primary">Submit</button>
 						<button type="button" class="btn btn-danger resetForm" @click="resetForm()">Reset</button>
