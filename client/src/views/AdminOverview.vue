@@ -12,7 +12,7 @@
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -95,7 +95,7 @@
                     </tbody>
                 </table>
                 <div id="privateChatroom">
-                    <form autocomplete="off" @submit.prevent="createPrivateChatroom">
+                    <form autocomplete="off" @submit.prevent="createPrivateChatroom()">
                         <h1>Private chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
@@ -212,7 +212,7 @@
             disableEditing() { this.editing = null; },
             editPublicChatroom(updatedPublicChatroom) {
                 if(updatedPublicChatroom.name != "" && updatedPublicChatroom.icon != "") {
-                    var body = {id: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
+                    var body = {publicChatroomId: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
                     axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editPublicChatroom", body).then(response => {
                         if(response.data.edited) {
                             this.publicChatrooms = this.publicChatrooms.map(publicChatroom => publicChatroom._id == updatedPublicChatroom._id ? updatedPublicChatroom : publicChatroom);

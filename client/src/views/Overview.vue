@@ -12,7 +12,7 @@
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -24,15 +24,15 @@
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="openProfile">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout">Log out</a>
+                                    <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
+                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </nav>
                 <div id="publicChatroom">
-                    <form autocomplete="off" @submit.prevent="joinAvailableChatroom">
+                    <form autocomplete="off" @submit.prevent="joinAvailableChatroom()">
                         <h1>Public chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
@@ -56,7 +56,7 @@
                     </form>
                 </div>
                 <div id="privateChatroom">
-                    <form autocomplete="off" @submit.prevent="createPrivateChatroom">
+                    <form autocomplete="off" @submit.prevent="createPrivateChatroom()">
                         <h1>Private chatroom</h1>
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
@@ -200,7 +200,7 @@
             checkStatus() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkStatus").then(response => console.log(response.data)).catch(error => console.log(error));
             },
-            gopenProfile() {
+            openProfile() {
                 this.$router.push("/profile");
             },
             openChatroom(chatroomId) {
