@@ -20,7 +20,7 @@
 				<br/>
 				<a href="#" @click="forgotUsername()">Forgot username?</a>
 			</div>
-			<div v-if="passwordMatch" class="loginFailed">Password does not match!</div>
+			<div v-if="passwordMatch" class="form-group loginFailed">Password does not match!</div>
 			<div class="form-group submitDiv">
 				<button type="submit" class="btn btn-primary submitButton">Log in</button>
 			</div>
@@ -100,9 +100,9 @@
 						const user = response.data.user;
 						this.$store.dispatch("login", {token, user});
 						if(user.isAdmin) {
-							this.$router.push({name: "AdminOverview"});
+							this.$router.push("/admin/overview");
 						} else {
-							this.$router.push({name: "Overview"});
+							this.$router.push("/overview");
 						}
 					} else {
 						if(response.data.allowed) {

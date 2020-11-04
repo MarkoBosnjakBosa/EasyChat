@@ -35,18 +35,24 @@ module.exports = function(app, jwt, bcryptjs, models) {
 			var query = {username: username};
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
-					bcryptjs.compare(password, user.password, function(error, foundPassword) {
-						if(foundPassword) {
-							const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
-							response.status(200).json({valid: true, token: token, user: user});
-							response.end();
-						} else {
-							response.status(200).json({valid: false, allowed: true});
-							response.end();
-						}
-					});
+					if(user.acceptance) {
+						bcryptjs.compare(password, user.password, function(error, foundPassword) {
+							if(foundPassword) {
+								const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
+								response.status(200).json({valid: true, token: token, user: user});
+								response.end();
+							} else {
+								response.status(200).json({valid: false, allowed: true});
+								response.end();
+							}
+						});
+					} else {
+						errorFields.push("username");
+						response.status(200).json({valid: false, allowed: false, errorFields: errorFields});
+						response.end();
+					}
 				} else {
-					errorFields.push("login");
+					errorFields.push("username");
 					response.status(200).json({valid: false, allowed: false, errorFields: errorFields});
 					response.end();
 				}
