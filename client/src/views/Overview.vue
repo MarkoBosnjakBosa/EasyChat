@@ -91,7 +91,7 @@
     var axios = require("axios");
 
     export default {
-        name: "adminOverview",
+        name: "overview",
         data() {
             return {
                 username: "",

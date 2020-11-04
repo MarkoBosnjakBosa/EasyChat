@@ -12,7 +12,7 @@
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="avatarWrapper">
                                         <button class="avatarUpload" :class="{'errorField' : avatarError && userSubmitting}">Upload avatar <i class="fas fa-upload"></i></button>
-                                        <input type="file" id="avatar" @change="selectAvatar()"/>
+                                        <input type="file" id="avatar" @change="selectAvatar($event)"/>
                                     </div>
                                     <small v-if="avatarError && userSubmitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
                                 </div>
@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="form-check">
-                                        <input type="checkbox" id="newsletters" class="form-check-input" v-model="user.newsletters" @click="clearNewslettersStatus()">
+                                        <input type="checkbox" id="newsletters" class="form-check-input" v-model="user.newsletters" @click="clearNewslettersStatus()"/>
                                         <label for="newsletters" class="form-check-label">Newsletters</label>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
     var axios = require("axios");
 
     export default {
-        name: "chatroom",
+        name: "profile",
         data() {
             return {
                 username: "",
