@@ -15,8 +15,8 @@
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
-			<div class="loginDiv">
-				<a class="btn btn-info" role="button" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+			<div class="form-group">
+				<a href="#" class="btn btn-info" role="button" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
 			</div>
 		</form>
 	</div>
@@ -104,14 +104,11 @@
 	#resetPassword {
 		margin: 0 auto;
 		max-width: 400px;
+		text-align: center;
 	}
 	h1 {
-		text-align: center;
 		margin-top: 20px;
 		margin-bottom: 20px;
-	}
-	.loginDiv {
-		text-align: center;
 	}
 	.passwordResetSuccessful {
 		color: #008000;

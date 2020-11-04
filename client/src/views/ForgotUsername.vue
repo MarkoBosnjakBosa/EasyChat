@@ -11,7 +11,7 @@
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
             <div class="form-group">
-                <a href="#" class="btn btn-info" role="button" @click="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+                <a href="#" class="btn btn-info" role="button" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
             </div>
 		</form>
 	</div>
@@ -79,7 +79,6 @@
         text-align: center;
 	}
 	h1 {
-		text-align: center;
 		margin-top: 20px;
 		margin-bottom: 20px;
 	}
