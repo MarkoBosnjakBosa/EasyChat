@@ -59,7 +59,7 @@ module.exports = function(io, models, async, moment) {
                 User.findOne(query).then(user => {
                     var newMessage = getMessageScheme(Message, chatroomId, username, user.avatar, message, date);
                     newMessage.save().then(message => {
-                        io.emit("newMessage", message);
+                        io.sockets.in(chatroomId).emit("newMessage", message);
                     }).catch(error => console.log(error));
                 }).catch(error => console.log(error));
             }
@@ -83,8 +83,8 @@ module.exports = function(io, models, async, moment) {
                 }
             }).catch(error => console.log(error));
         });
-        socket.on("typing", username => socket.broadcast.emit("typing", username));
-        socket.on("stopTyping", () => socket.broadcast.emit("stopTyping"));
+        socket.on("typing", (chatroomId, username) => socket.to(chatroomId).broadcast.emit("typing", username));
+        socket.on("stopTyping", chatroomId => socket.to(chatroomId).broadcast.emit("stopTyping"));
         socket.on("disconnect", () => {
             getUserChatrooms(socket).forEach(chatroomId => {
                 socket.to(chatroomId).broadcast.emit("userOffline", socket.id);

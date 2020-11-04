@@ -313,9 +313,9 @@
         watch: {
             newMessage(value) {
                 if(value) {
-                    this.socket.emit("typing", this.username);
+                    this.socket.emit("typing", this.chatroomId, this.username);
                 } else {
-                    this.socket.emit("stopTyping");
+                    this.socket.emit("stopTyping", this.chatroomId);
                 }
             }
         },
