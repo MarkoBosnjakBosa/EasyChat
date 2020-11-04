@@ -215,7 +215,14 @@
 			}
 		},
 		computed: {
-			invalidUsername() { return this.user.username === ""; },
+			invalidUsername() { 
+				var usernameFormat = /^[a-z0-9_.-]*$/;
+				if(this.user.username != "" && usernameFormat.test(this.user.username)) {
+					return false;
+				} else {
+					return true;
+				}
+			},
 			invalidEmail() {
 				var emailFormat = /\S+@\S+\.\S+/;
 				if(this.user.email != "" && emailFormat.test(this.user.email)) {

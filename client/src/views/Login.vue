@@ -137,7 +137,14 @@
 			}
 		},
 		computed: {
-			invalidUsername() { return this.user.username === ""; },
+			invalidUsername() { 
+				var usernameFormat = /^[a-z0-9_.-]*$/;
+				if(this.user.username != "" && usernameFormat.test(this.user.username)) {
+					return false;
+				} else {
+					return true;
+				}
+			},
 			invalidPassword() {
 				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 				if(this.user.password != "" && passwordFormat.test(this.user.password)) {

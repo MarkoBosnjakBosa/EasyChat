@@ -26,7 +26,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		var allowRegistration = true;
 		var errorFields = [];
 		var username = request.body.username;
-		if(!username) {
+		if(!username || invalidUsername(username)) {
 			errorFields.push("username");
 			allowRegistration = false;
 		}
@@ -123,6 +123,14 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 				"</html>"
 		};
 		transporter.sendMail(mailOptions).then().catch(error => console.log(error));
+	}
+	function invalidUsername(username) {
+		var usernameFormat = /^[a-z0-9_.-]*$/;
+		if(usernameFormat.test(username)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	function invalidEmail(email) {
 		var emailFormat = /\S+@\S+\.\S+/;

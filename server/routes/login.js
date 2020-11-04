@@ -22,7 +22,7 @@ module.exports = function(app, jwt, bcryptjs, models) {
 		var allowLogin = true;
 		var errorFields = [];
 		var username = request.body.username;
-		if(!username) {
+		if(!username || invalidUsername(username)) {
 			errorFields.push("username");
 			allowLogin = false;
 		}
@@ -73,6 +73,14 @@ module.exports = function(app, jwt, bcryptjs, models) {
 		}
 	});
 
+	function invalidUsername(username) {
+		var usernameFormat = /^[a-z0-9_.-]*$/;
+		if(usernameFormat.test(username)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
  	function invalidPassword(password) {
 		var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 		if(passwordFormat.test(password)) {
