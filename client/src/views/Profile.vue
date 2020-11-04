@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="form-check">
-                                        <input type="checkbox" id="newsletters" class="form-check-input" v-model="user.newsletters" @click="clearNewslettersStatus()"/>
+                                        <input type="checkbox" id="newsletters" class="form-check-input" v-model="user.sendNewsletters" @click="clearSendNewslettersStatus()"/>
                                         <label for="newsletters" class="form-check-label">Newsletters</label>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
 					firstName: "",
 					lastName: "",
                     avatar: "",
-                    newsletters: false
+                    sendNewsletters: false
 				},
                 userEdited: false,
                 passwordSubmitting: false,
@@ -189,7 +189,7 @@
 				formData.append("firstName", this.user.firstName);
 				formData.append("lastName", this.user.lastName);
                 formData.append("avatar", this.user.avatar);
-                formData.append("newsletters", this.user.newsletters);
+                formData.append("sendNewsletters", this.user.sendNewsletters);
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editUser", formData).then(response => {
                     if(response.data.edited) {
                         this.userEdited = true;
@@ -255,7 +255,7 @@
                 this.avatarError = false;
                 this.userEdited = false;
             },
-            clearNewslettersStatus() {
+            clearSendNewslettersStatus() {
                 this.userEdited = false;
             },
             clearPasswordStatus() { 

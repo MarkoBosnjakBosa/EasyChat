@@ -35,7 +35,7 @@ module.exports = function(app, jwt, bcryptjs, models) {
 			var query = {username: username};
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
-					if(user.acceptance) {
+					if(user.accepted) {
 						bcryptjs.compare(password, user.password, function(error, foundPassword) {
 							if(foundPassword) {
 								const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});

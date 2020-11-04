@@ -68,13 +68,13 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 					response.status(200).json(error);
 					response.end();
 				} else {
-					var newsletters = true;
-					var acceptance = false;
+					var sendNewsletters = true;
+					var accepted = false;
 					var isAdmin = false;
 					var avatarImage = fs.readFileSync(avatar.path);
           			var encodedAvatarImage = avatarImage.toString("base64");
 					var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
-					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, newsletters, acceptance, isAdmin);
+					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, sendNewsletters, accepted, isAdmin);
 					bcryptjs.genSalt(10, (error, salt) => {
 						bcryptjs.hash(newUser.password, salt, (error, hash) => {
 							newUser.password = hash;
@@ -95,7 +95,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 	app.get("/confirm/registration/:username", (request, response) => {
 		var username = request.params.username;
 		var query = {username: username};
-		var update = {acceptance: true};
+		var update = {accepted: true};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!isEmpty(user)) {
 				response.render("registration.html", {confirmed: true, loginUrl: loginUrl});
@@ -105,8 +105,8 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		}).catch(error => console.log(error));
 	});
 
-	function getUserScheme(User, username, email, password, firstName, lastName, avatar, newsletters, acceptance, isAdmin) {
-		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, newsletters: newsletters, acceptance: acceptance, isAdmin: isAdmin});
+	function getUserScheme(User, username, email, password, firstName, lastName, avatar, sendNewsletters, accepted, isAdmin) {
+		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, sendNewsletters: sendNewsletters, accepted: accepted, isAdmin: isAdmin});
 	}
 	function sendConfirmationEmail(username, email, firstName) {
 		var mailOptions = {
