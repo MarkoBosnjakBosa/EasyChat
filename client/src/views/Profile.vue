@@ -134,8 +134,7 @@
                 passwordSubmitting: false,
                 passwordError: false,
                 password: "",
-                passwordReset: false,
-                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
+                passwordReset: false
             }
         },
         methods: {

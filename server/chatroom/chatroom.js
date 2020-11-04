@@ -17,13 +17,13 @@ module.exports = function(io, models, async, moment) {
             queries.push(function(callback) {
                 Message.find(messageQuery).then(foundMessages => {
                     callback(null, foundMessages);
-                });
+                }).catch(error => console.log(error));
             });
             var chatroomQuery = {_id: chatroomId};
             queries.push(function(callback) {
                 Chatroom.findOne(chatroomQuery).then(chatroom => {
                   callback(null, chatroom);
-                });
+                }).catch(error => console.log(error));
             });
             async.parallel(queries).then(results => {
                 var messageResults = results[0];
@@ -65,7 +65,7 @@ module.exports = function(io, models, async, moment) {
             }
         });
         socket.on("editMessage", (messageId, message) => {
-            if(messageId && message) {
+            if(message) {
                 var query = {_id: messageId};
                 var update = {message: message};
                 Message.findOneAndUpdate(query, update, {new: true}).then(message => {

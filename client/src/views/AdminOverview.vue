@@ -148,8 +148,7 @@
                 privateSubmitting: false,
                 availableUserError: false,
                 availableUser: "",
-                privateChatroomCreated: false,
-                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
+                privateChatroomCreated: false
             }
         },
         methods: {

@@ -12,7 +12,7 @@
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar"><i class="fas fa-angle-double-left"></i></button>
+                    <button type="button" id="toggleSidebar" class="btn btn-info" @click="toggleSidebar()"><i class="fas fa-angle-double-left"></i></button>
                     <button type="button" class="btn btn-info scrollDown" @click="scrollDown()"><i class="fas fa-arrow-down"></i></button>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarOptions" aria-controls="navbarOptions" aria-expanded="false">
                         <span class="navbar-toggler-icon"></span>
@@ -39,24 +39,22 @@
                 <div class="container-fluid">
                     <div class="form-row">
                         <div class="col-md-8">
-                            <div v-if="!messages.length" class="message">
-                                 <div class="card">
-                                    <div class="card-header">
-                                        <span>Bot {{renderDate("")}}</span>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-sm-1">
-                                                <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="rounded-circle" width="50" height="50">
-                                            </div>
-                                            <div class="col-sm-11">
-                                                <span>No messages yet...</span>
-                                            </div>
+                            <div v-if="!messages.length" class="card">
+                                <div class="card-header">
+                                    <span>Bot {{renderDate("")}}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-1">
+                                            <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <span>No messages yet...</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div v-for="message in messages" v-bind:key="message._id" class="" :class="{'myMessage': isMyMessage(message.username)}">
+                            <div v-for="message in messages" v-bind:key="message._id" :class="{'myMessage': isMyMessage(message.username)}">
                                 <div v-if="isMyMessage(message.username)" class="card">
                                     <div class="card-header">
                                         <span>{{message.username + ' ' + renderDate(message.date)}}</span>
@@ -258,7 +256,9 @@
                 }
             },
             openUsers() {
-                this.$router.push("/admin/users");
+                if(this.isAdmin) {
+                    this.$router.push("/admin/users");
+                }
             },
             openProfile() {
                 this.$router.push("/profile");
