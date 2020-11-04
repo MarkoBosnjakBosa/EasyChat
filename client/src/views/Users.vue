@@ -73,6 +73,7 @@
         data() {
             return {
                 username: "",
+                isAdmin: false,
                 publicChatrooms: [],
                 privateChatrooms: [],
                 users: []
@@ -82,7 +83,12 @@
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
                 this.username = this.$store.getters.getUser.username;
-                this.checkStatus();
+                this.isAdmin = this.$store.getters.getUser.isAdmin;
+                if(this.isAdmin) {
+                    this.checkStatus();
+                } else {
+                    this.logout();
+                }
             },
             getChatrooms() {
                 axios.get(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/getChatrooms/" + this.username).then(response => {
@@ -102,6 +108,7 @@
                 axios.delete(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/deleteUser/" + username).then(response => {
                     if(response.data.deleted) {
                         this.users = this.users.filter(user => user.username != username);
+                        this.getChatrooms();
                     }
                 }).catch(error => console.log(error));
             },
