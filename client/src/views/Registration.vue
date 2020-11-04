@@ -10,7 +10,7 @@
 						</div>
 						<div class="avatarWrapper">
 							<button class="avatarUpload" :class="{'errorField' : avatarError && submitting}">Upload avatar <i class="fas fa-upload"></i></button>
-							<input type="file" id="avatar" @change="selectAvatar()"/>
+							<input type="file" id="avatar" @change="selectAvatar($event)"/>
 						</div>
 						<small v-if="avatarError && submitting" class="form-text errorInput" style="text-align: center">Please provide a valid avatar!</small>
 					</div>
