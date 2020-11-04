@@ -61,7 +61,7 @@
 				this.$router.push("/registration");
 			},
 			checkUsername() {
-				var body = {username: this.user.username.toLowerCase()};
+				var body = {username: this.user.username};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
 					if(response.data.exists) {
 						this.usernameError = false;
@@ -91,7 +91,7 @@
 					this.passwordMatch = false;
 					return;
 				}
-				var body = {username: this.user.username.toLowerCase(), password: this.user.password};
+				var body = {username: this.user.username, password: this.user.password};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body).then(response => {
 					if(response.data.valid) {
 						this.user = {username: "", password: ""};

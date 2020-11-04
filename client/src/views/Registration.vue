@@ -128,7 +128,7 @@
 					return;
 				}
 				var formData = new FormData();
-				formData.append("username", this.user.username.toLowerCase());
+				formData.append("username", this.user.username);
 				formData.append("email", this.user.email);
 				formData.append("password", this.user.password);
 				formData.append("firstName", this.user.firstName);
