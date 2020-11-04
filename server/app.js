@@ -53,5 +53,5 @@ http.listen(port, function() {
 });
 
 function getTransporter() {
- 	return mailer.createTransport({service: "gmail", auth: { user: emailUser, pass: emailPassword}});
+ 	return mailer.createTransport({service: "gmail", auth: {user: emailUser, pass: emailPassword}});
 }
