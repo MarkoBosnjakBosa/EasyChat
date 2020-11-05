@@ -9,6 +9,7 @@ import Overview from "../views/Overview.vue";
 import Chatroom from "../views/Chatroom.vue";
 import Users from "../views/Users.vue";
 import Profile from "../views/Profile.vue";
+import PageNotFound from "../views/PageNotFound.vue";
 
 const routes = [
 	{
@@ -60,6 +61,11 @@ const routes = [
 		path: "/profile",
 		name: "Profile",
 		component: Profile
+	},
+	{
+		path: "/:catchAll(.*)",
+		name: "PageNotFound",
+		component: PageNotFound
 	}
 ]
 
