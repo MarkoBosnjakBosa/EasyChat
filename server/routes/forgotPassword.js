@@ -83,7 +83,7 @@ module.exports = function(app, bcryptjs, models, transporter, emailUser, resetPa
 		var mailOptions = {
 			from: emailUser,
 			to: email,
-			subject: "Reset password",
+			subject: "Retrieve username",
 			html: "<html>" +
 				"<body>" +
 				"<p>Dear <b>" + firstName + "</b>,</p>" +
