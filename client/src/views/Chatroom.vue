@@ -59,7 +59,7 @@
                                     <div class="card-header">
                                         <span>{{message.username + ' ' + renderDate(message.date)}}</span>
                                         <div v-if="editing != message._id" class="actionButtons">
-                                            <i class="fas fa-pencil-alt" @click="enableEditing(message._id)"></i>
+                                            <i class="fas fa-pencil-alt" @click="enableEditing(message)"></i>
                                             <i class="fas fa-times-circle" @click="deleteMessage(message._id)"></i>
                                         </div>
                                     </div>
@@ -72,7 +72,7 @@
                                                     </div>
                                                     <div class="col-sm-1 editButtons">
                                                         <i class="far fa-check-circle editMessage" @click="editMessage(message._id, message.message)"></i>
-                                                        <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
+                                                        <i class="far fa-times-circle disableEditing" @click="disableEditing(message)"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -139,6 +139,7 @@
         data() {
             return {
                 socket: io(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT),
+                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT,
                 username: "",
                 isAdmin: false,
                 chatroomId: "",
@@ -151,8 +152,7 @@
                 newMessage: "",
                 typing: "",
                 publicChatrooms: [],
-                privateChatrooms: [],
-                baseUrl: process.env.VUE_APP_BASE_URL + process.env.VUE_APP_CLIENT_PORT
+                privateChatrooms: []
             }
         },
         methods: {
@@ -202,10 +202,16 @@
                 this.newMessage = "";
                 this.newMessageError = false, this.submitting = false;
             },
-            enableEditing(messageId) { this.editing = messageId; },
-            disableEditing() { this.editing = null; },
+            enableEditing(message) {
+                this.cachedMessage = Object.assign({}, message);
+                this.editing = message._id;
+            },
+            disableEditing(message) { 
+                Object.assign(message, this.cachedMessage);
+                this.editing = null;
+            },
             editMessage(messageId, message) {
-                if(messageId && message) {
+                if(message) {
                     this.socket.emit("editMessage", messageId, message);
                 }
             },

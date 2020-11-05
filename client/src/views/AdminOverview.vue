@@ -85,10 +85,10 @@
                             <td v-else>{{publicChatroom.blockedParticipants.join(", ")}}</td>
                             <td v-if="editing == publicChatroom._id" class="padded">
                                 <i class="far fa-check-circle editPublicChatroom" @click="editPublicChatroom(publicChatroom)"></i>
-                                <i class="far fa-times-circle disableEditing" @click="disableEditing()"></i>
+                                <i class="far fa-times-circle disableEditing" @click="disableEditing(publicChatroom)"></i>
                             </td>
                             <td v-else>
-                                <i class="fas fa-pencil-alt" @click="enableEditing(publicChatroom._id)"></i>
+                                <i class="fas fa-pencil-alt" @click="enableEditing(publicChatroom)"></i>
                                 <i class="fas fa-trash" @click="deletePublicChatroom(publicChatroom._id)"></i>
                             </td>
                         </tr>
@@ -207,8 +207,14 @@
                     }
                 }).catch(error => console.log(error));
             },
-            enableEditing(publicChatroomId) { this.editing = publicChatroomId; },
-            disableEditing() { this.editing = null; },
+            enableEditing(publicChatroom) {
+                this.cachedPublicChatroom = Object.assign({}, publicChatroom);
+                this.editing = publicChatroom._id;
+            },
+            disableEditing(publicChatroom) {
+                Object.assign(publicChatroom, this.cachedPublicChatroom);
+                this.editing = null;
+            },
             editPublicChatroom(updatedPublicChatroom) {
                 if(updatedPublicChatroom.name != "" && updatedPublicChatroom.icon != "") {
                     var body = {publicChatroomId: updatedPublicChatroom._id, name: updatedPublicChatroom.name, icon: updatedPublicChatroom.icon};
