@@ -51,7 +51,7 @@ module.exports = function(io, models, async, moment) {
             socket.to(chatroomId).broadcast.emit("userOnline", user);
         });
         socket.on("newMessage", (chatroomId, message) => {
-            if(message) {
+            if(chatroomId && message) {
                 var dateFormat = "DD.MM.YYYY HH:mm";
                 var date = moment().format(dateFormat);
                 var username = chatrooms[chatroomId].users[socket.id];
