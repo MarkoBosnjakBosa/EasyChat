@@ -65,7 +65,7 @@ module.exports = function(io, models, async, moment) {
             }
         });
         socket.on("editMessage", (messageId, message) => {
-            if(message) {
+            if(messageId && message) {
                 var query = {_id: messageId};
                 var update = {message: message};
                 Message.findOneAndUpdate(query, update, {new: true}).then(message => {
@@ -76,12 +76,14 @@ module.exports = function(io, models, async, moment) {
             }
         });
         socket.on("deleteMessage", messageId => {
-            var query = {_id: messageId};
-            Message.findOneAndRemove(query).then(message => {
-                if(!isEmpty(message)) {
-                    io.emit("deleteMessage", message._id);
-                }
-            }).catch(error => console.log(error));
+            if(messageId) {
+                var query = {_id: messageId};
+                Message.findOneAndRemove(query).then(message => {
+                    if(!isEmpty(message)) {
+                        io.emit("deleteMessage", message._id);
+                    }
+                }).catch(error => console.log(error));
+            }
         });
         socket.on("typing", (chatroomId, username) => socket.to(chatroomId).broadcast.emit("typing", username));
         socket.on("stopTyping", chatroomId => socket.to(chatroomId).broadcast.emit("stopTyping"));
