@@ -64,12 +64,12 @@ module.exports = function(app, jwt, bcryptjs, models) {
 	});
 	app.get("/checkStatus", (request, response) => {
 		try {
-            const token = request.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, "newSecretKey");
+			const token = request.headers.authorization.split(" ")[1];
+			const decoded = jwt.verify(token, "newSecretKey");
 			request.userData = decoded;
 			response.status(200).json({loggedIn: true});
-        } catch (error){
-            response.status(401).json({loggedIn: false});
+		} catch (error){
+			response.status(401).json({loggedIn: false});
 		}
 	});
 
