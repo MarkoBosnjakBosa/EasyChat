@@ -263,40 +263,40 @@
                 this.passwordReset = false;
             },
             selectAvatar(event) {
-				this.userSubmitting = false;
-				var files = event.target.files;
+                this.userSubmitting = false;
+                var files = event.target.files;
                 var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
-				if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
-					var file = files[0];
-					var reader = new FileReader();
-					reader.onload = function(e) {
-						var previewAvatar = document.getElementById("previewAvatar");
-						previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
-					}
-					this.user.avatar = file;
-					this.clearAvatarStatus();
-					reader.readAsDataURL(file);
-				} else {
-					this.avatarError = true;
-					this.userSubmitting = true;
+                if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
+                    var file = files[0];
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var previewAvatar = document.getElementById("previewAvatar");
+                        previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
+                    }
+                    this.user.avatar = file;
+                    this.clearAvatarStatus();
+                    reader.readAsDataURL(file);
+                } else {
+                    this.avatarError = true;
+                    this.userSubmitting = true;
                 }
             },
             togglePassword() {
                 var type = document.getElementById("password").getAttribute("type");
-				switch(type) {
-					case "password": {
-						document.getElementById("password").setAttribute("type", "text");
-						document.getElementById("togglePassword").classList.remove("fa-eye");
-						document.getElementById("togglePassword").classList.add("fa-eye-slash");
-						return;
-					}
-					case "text": {
-						document.getElementById("password").setAttribute("type", "password");
-						document.getElementById("togglePassword").classList.remove("fa-eye-slash");
-						document.getElementById("togglePassword").classList.add("fa-eye");
-						return;
-					}
-				}
+                switch(type) {
+                    case "password": {
+                        document.getElementById("password").setAttribute("type", "text");
+                        document.getElementById("togglePassword").classList.remove("fa-eye");
+                        document.getElementById("togglePassword").classList.add("fa-eye-slash");
+                        return;
+                    }
+                    case "text": {
+                        document.getElementById("password").setAttribute("type", "password");
+                        document.getElementById("togglePassword").classList.remove("fa-eye-slash");
+                        document.getElementById("togglePassword").classList.add("fa-eye");
+                        return;
+                    }
+                }
 			},
             toggleChatrooms(type) {
                 if(type == "public") {
@@ -342,17 +342,17 @@
         },
         computed: {
             invalidFirstName() { return this.user.firstName === ""; },
-			invalidLastName() { return this.user.lastName === ""; },
-			invalidAvatar() { return this.user.avatar === ""; },
-			invalidPassword() {
-				var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-				if(this.user.password != "" && passwordFormat.test(this.user.password)) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-		},
+            invalidLastName() { return this.user.lastName === ""; },
+            invalidAvatar() { return this.user.avatar === ""; },
+            invalidPassword() {
+                var passwordFormat = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+                if(this.user.password != "" && passwordFormat.test(this.user.password)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        },
         created() {
             this.isLoggedIn();
             this.getChatrooms();
