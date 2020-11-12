@@ -162,8 +162,8 @@
 				}).catch(error => console.log(error));
 			},
 			login() {
-                this.$router.push("/login");
-            },
+				this.$router.push("/login");
+			},
 			clearUsernameStatus() { this.usernameError = false; },
 			clearEmailStatus() { this.emailError = false; },
 			clearPasswordStatus() { this.passwordError = false; },
