@@ -10,9 +10,9 @@
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
-            <div class="form-group">
-                <a href="#" class="btn btn-info" role="button" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
-            </div>
+			<div class="form-group">
+				<a href="#" class="btn btn-info" role="button" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+			</div>
 		</form>
 	</div>
 </template>
@@ -75,8 +75,8 @@
 <style scoped>
 	#forgotUsername {
 		margin: 0 auto;
-        max-width: 400px;
-        text-align: center;
+		max-width: 400px;
+		text-align: center;
 	}
 	h1 {
 		margin-top: 20px;
