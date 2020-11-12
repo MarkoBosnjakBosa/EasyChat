@@ -15,10 +15,10 @@ module.exports = function(app, models, multer, fs, path) {
 		fileFilter: function (request, file, callback) {
 			if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
 				callback(null, true);
-		  	} else {
-				request.extensionValidationError = true;
-				return callback(null, false, request.extensionValidationError);
-		  	}
+            } else {
+                request.extensionValidationError = true;
+                return callback(null, false, request.extensionValidationError);
+            }
 		},
 		limits: {fileSize: 500000}
 	});
@@ -32,24 +32,24 @@ module.exports = function(app, models, multer, fs, path) {
     });
     app.put("/editUser", upload.single("avatar"), (request, response) => {
         var allowEdit = true;
-		var errorFields = [];
+        var errorFields = [];
         var username = request.body.username;
         var firstName = request.body.firstName;
-		if(!username && !firstName) {
-			errorFields.push("firstName");
-			allowEdit = false;
-		}
-		var lastName = request.body.lastName;
-		if(!lastName) {
-			errorFields.push("lastName");
-			allowEdit = false;
-		}
+        if(!username && !firstName) {
+            errorFields.push("firstName");
+            allowEdit = false;
+        }
+        var lastName = request.body.lastName;
+        if(!lastName) {
+            errorFields.push("lastName");
+            allowEdit = false;
+        }
         var avatar = request.file;
-		if(!avatar && request.extensionValidationError) {
-			errorFields.push("avatar");
-			allowEdit = false;
-		}
-		if(allowEdit) {
+        if(!avatar && request.extensionValidationError) {
+            errorFields.push("avatar");
+            allowEdit = false;
+        }
+        if(allowEdit) {
             var sendNewsletters = request.body.sendNewsletters;
             var query = {username: username};
             var update = {};
@@ -63,7 +63,7 @@ module.exports = function(app, models, multer, fs, path) {
             } catch(error) {
                 update = {firstName: firstName, lastName: lastName, sendNewsletters: sendNewsletters};
             }
-			User.findOneAndUpdate(query, update).then(user => {
+            User.findOneAndUpdate(query, update).then(user => {
                 if(removeOldAvatar) {
                     if(!isEmpty(user.avatar.name) && !isEmpty(user.avatar.contentType) && !isEmpty(user.avatar.image)) {
                         fs.unlink(path.join(__dirname, "../images/avatars/", user.avatar.name), function(error) {});
@@ -73,8 +73,8 @@ module.exports = function(app, models, multer, fs, path) {
                 response.end();
             }).catch(error => console.log(error));
         } else {
-			response.status(200).json({edited: false, errorFields: errorFields});
-			response.end();
+            response.status(200).json({edited: false, errorFields: errorFields});
+            response.end();
         }
     });
 
