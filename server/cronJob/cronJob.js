@@ -12,7 +12,7 @@ module.exports = function(cron, models, fs, moment, transporter, emailUser) {
         });
     });
 
-    function sendNewsletterEmail(email, firstName) {
+	function sendNewsletterEmail(email, firstName) {
 		var mailOptions = {
 			from: emailUser,
 			to: email,
