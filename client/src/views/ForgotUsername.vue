@@ -53,10 +53,10 @@
 						this.emailSent = false;
 					}
 				}).catch(error => console.log(error));
-            },
-            login() {
-                this.$router.push("/login");
-            },
+			},
+			login() {
+				this.$router.push("/login");
+			},
 			clearEmailStatus() { this.emailError = false; }
 		},
 		computed: {
