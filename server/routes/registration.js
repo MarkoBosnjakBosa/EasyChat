@@ -2,12 +2,12 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 	const User = models.User;
 	var storage = multer.diskStorage({
 		destination: function (request, file, callback) {
-		  	callback(null, "images/avatars/");
+			callback(null, "images/avatars/");
 		},
 		filename: function (request, file, callback) {
 			var fileArray = file.originalname.split(".");
-            var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
-		  	callback(null, fileName);
+			var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
+			callback(null, fileName);
 		},
 	});
 	var upload = multer({
@@ -15,10 +15,10 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		fileFilter: function (request, file, callback) {
 			if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
 				callback(null, true);
-		  	} else {
+			} else {
 				request.extensionValidationError = true;
 				return callback(null, false, request.extensionValidationError);
-		  	}
+			}
 		},
 		limits: {fileSize: 500000}
 	});
@@ -72,7 +72,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 					var accepted = false;
 					var isAdmin = false;
 					var avatarImage = fs.readFileSync(avatar.path);
-          			var encodedAvatarImage = avatarImage.toString("base64");
+					var encodedAvatarImage = avatarImage.toString("base64");
 					var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
 					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, sendNewsletters, accepted, isAdmin);
 					bcryptjs.genSalt(10, (error, salt) => {
