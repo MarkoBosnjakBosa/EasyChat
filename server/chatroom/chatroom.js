@@ -22,7 +22,7 @@ module.exports = function(io, models, async, moment) {
             var chatroomQuery = {_id: chatroomId};
             queries.push(function(callback) {
                 Chatroom.findOne(chatroomQuery).then(chatroom => {
-                  callback(null, chatroom);
+                    callback(null, chatroom);
                 }).catch(error => console.log(error));
             });
             async.parallel(queries).then(results => {
