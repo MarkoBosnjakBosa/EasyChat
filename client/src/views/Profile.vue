@@ -297,7 +297,7 @@
                         return;
                     }
                 }
-			},
+            },
             toggleChatrooms(type) {
                 if(type == "public") {
                     var publicChatrooms = document.querySelectorAll(".publicChatroom");
