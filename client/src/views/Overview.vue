@@ -153,7 +153,6 @@
                         if(errorFields.includes("availableChatroom")) this.availableChatroomError = true;
                         this.publicChatroomJoined = false;
                     }
-                    
                 }).catch(error => console.log(error));
             },
             leavePublicChatroom(publicChatroomId) {
