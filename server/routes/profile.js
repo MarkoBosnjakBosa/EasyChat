@@ -1,16 +1,16 @@
 module.exports = function(app, models, multer, fs, path) {
     const User = models.User;
     var storage = multer.diskStorage({
-		destination: function (request, file, callback) {
-		  	callback(null, "images/avatars/");
-		},
+        destination: function (request, file, callback) {
+            callback(null, "images/avatars/");
+        },
         filename: function (request, file, callback) {
             var fileArray = file.originalname.split(".");
             var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
             callback(null, fileName);
         },
-	});
-	var upload = multer({
+    });
+    var upload = multer({
         storage: storage,
         fileFilter: function (request, file, callback) {
             if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
@@ -21,7 +21,7 @@ module.exports = function(app, models, multer, fs, path) {
             }
         },
         limits: {fileSize: 500000}
-	});
+    });
     app.get("/getUser/:username", (request, response) => {
         var username = request.params.username;
         var query = {username: username};
