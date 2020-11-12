@@ -119,17 +119,17 @@
                 publicChatrooms: [],
                 privateChatrooms: [],
                 userSubmitting: false,
-				firstNameError: false,
-				lastNameError: false,
-				avatarError: false,
-				user: {
-					username: "",
-					email: "",
-					firstName: "",
-					lastName: "",
+                firstNameError: false,
+                lastNameError: false,
+                avatarError: false,
+                user: {
+                    username: "",
+                    email: "",
+                    firstName: "",
+                    lastName: "",
                     avatar: "",
                     sendNewsletters: false
-				},
+                },
                 userEdited: false,
                 passwordSubmitting: false,
                 passwordError: false,
@@ -164,30 +164,30 @@
             },
             editUser() {
                 this.userSubmitting = true;
-				this.clearFirstNameStatus();
-				this.clearLastNameStatus();
-				this.clearAvatarStatus();
-				var allowSubmit = true;
-				if(this.invalidFirstName) {
-					this.firstNameError = true;
-					allowSubmit = false;
-				}
-				if(this.invalidLastName) {
-					this.lastNameError = true;
-					allowSubmit = false;
-				}
-				if(this.invalidAvatar) {
-					this.avatarError = true;
-					allowSubmit = false;
-				}
-				if(!allowSubmit) {
-					this.userEdited = false;
-					return;
-				}
+                this.clearFirstNameStatus();
+                this.clearLastNameStatus();
+                this.clearAvatarStatus();
+                var allowSubmit = true;
+                if(this.invalidFirstName) {
+                    this.firstNameError = true;
+                    allowSubmit = false;
+                }
+                if(this.invalidLastName) {
+                    this.lastNameError = true;
+                    allowSubmit = false;
+                }
+                if(this.invalidAvatar) {
+                    this.avatarError = true;
+                    allowSubmit = false;
+                }
+                if(!allowSubmit) {
+                    this.userEdited = false;
+                    return;
+                }
                 var formData = new FormData();
-				formData.append("username", this.username);
-				formData.append("firstName", this.user.firstName);
-				formData.append("lastName", this.user.lastName);
+                formData.append("username", this.username);
+                formData.append("firstName", this.user.firstName);
+                formData.append("lastName", this.user.lastName);
                 formData.append("avatar", this.user.avatar);
                 formData.append("sendNewsletters", this.user.sendNewsletters);
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/editUser", formData).then(response => {
@@ -205,12 +205,12 @@
             },
             resetPassword() {
                 this.passwordSubmitting = true;
-				this.clearPasswordStatus();
-				if(this.invalidPassword) {
-					this.passwordError = true;
-					this.passwordReset = false;
-					return;
-				}
+                this.clearPasswordStatus();
+                if(this.invalidPassword) {
+                    this.passwordError = true;
+                    this.passwordReset = false;
+                    return;
+                }
                 var body = {username: this.username, password: this.password};
                 axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
                     if(response.data.reset) {
@@ -243,11 +243,11 @@
                 this.$store.dispatch("logout");
                 this.$router.push("/login");
             },
-			clearFirstNameStatus() { 
+            clearFirstNameStatus() { 
                 this.firstNameError = false;
                 this.userEdited = false;
             },
-			clearLastNameStatus() { 
+            clearLastNameStatus() { 
                 this.lastNameError = false;
                 this.userEdited = false;
             },
