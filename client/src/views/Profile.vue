@@ -363,65 +363,65 @@
 
 <style scoped>
     .personalInformation {
-		margin: 0 auto;
-		max-width: 800px;
-	}
+        margin: 0 auto;
+        max-width: 800px;
+    }
     .resetPassword {
         margin: 0 auto;
-		max-width: 400px;
+        max-width: 400px;
     }
     h1 {
-		text-align: center;
-		margin-top: 20px;
-		margin-bottom: 20px;
-	}
-	.avatarDiv {
-		margin: 0 auto;
-		margin-top: 50px;
-	}
-	#previewAvatar {
-		text-align: center;
-		margin-bottom: 10px;
-	}
-	.avatarWrapper {
-		position: relative;
-		overflow: hidden;
-		display: inline-block;
-	}
-	.avatarUpload {
-		border: 2px solid #808080;
-		color: #808080;
-		background-color: #fff;
-		padding: 8px 20px;
-		border-radius: 8px;
-		font-size: 20px;
-		font-weight: bold;
-		margin-left: 30px;
-	}
-	#avatar {
-		opacity: 0;
-		position: absolute;
-		left: 0px;
-		top: 0px;
-		font-size: 100px;
-	}
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .avatarDiv {
+        margin: 0 auto;
+        margin-top: 50px;
+    }
+    #previewAvatar {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .avatarWrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    .avatarUpload {
+        border: 2px solid #808080;
+        color: #808080;
+        background-color: #fff;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 20px;
+        font-weight: bold;
+        margin-left: 30px;
+    }
+    #avatar {
+        opacity: 0;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        font-size: 100px;
+    }
     .submitButton {
-		text-align: center;
-	}
+        text-align: center;
+    }
     .editSuccessful, .resetSuccessful {
-		color: #008000;
-		margin-bottom: 10px;
-	}
-	.errorField {
-		border: 1px solid #ff0000;
-		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
-	}
-	.errorIcon {
-		border: 1px solid #ff0000;
-		border-left: 0px;
-		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
-	}
-	.errorInput {
-		color: #ff0000;
-	}
+        color: #008000;
+        margin-bottom: 10px;
+    }
+    .errorField {
+        border: 1px solid #ff0000;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
+    }
+    .errorIcon {
+        border: 1px solid #ff0000;
+        border-left: 0px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1), 0 0 6px #ff8080;
+    }
+    .errorInput {
+        color: #ff0000;
+    }
 </style>
