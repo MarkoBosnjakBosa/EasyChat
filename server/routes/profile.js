@@ -7,7 +7,7 @@ module.exports = function(app, models, multer, fs, path) {
 		filename: function (request, file, callback) {
             var fileArray = file.originalname.split(".");
             var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
-		  	callback(null, fileName);
+            callback(null, fileName);
 		},
 	});
 	var upload = multer({
