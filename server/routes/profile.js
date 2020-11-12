@@ -4,23 +4,23 @@ module.exports = function(app, models, multer, fs, path) {
 		destination: function (request, file, callback) {
 		  	callback(null, "images/avatars/");
 		},
-		filename: function (request, file, callback) {
+        filename: function (request, file, callback) {
             var fileArray = file.originalname.split(".");
             var fileName = fileArray[0] + "_" + Date.now() + "." + fileArray[1];
             callback(null, fileName);
-		},
+        },
 	});
 	var upload = multer({
-		storage: storage,
-		fileFilter: function (request, file, callback) {
-			if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
-				callback(null, true);
+        storage: storage,
+        fileFilter: function (request, file, callback) {
+            if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+                callback(null, true);
             } else {
                 request.extensionValidationError = true;
                 return callback(null, false, request.extensionValidationError);
             }
-		},
-		limits: {fileSize: 500000}
+        },
+        limits: {fileSize: 500000}
 	});
     app.get("/getUser/:username", (request, response) => {
         var username = request.params.username;
