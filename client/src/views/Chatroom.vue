@@ -46,7 +46,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-sm-1">
-                                            <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                            <img :src="require('../assets/defaultAvatar.jpg')" alt="Avatar" class="rounded-circle img-fluid" width="50" height="50">
                                         </div>
                                         <div class="col-sm-11">
                                             <span>No messages yet...</span>
@@ -80,7 +80,7 @@
                                                 <span>{{message.message}}</span>
                                             </div>
                                             <div class="col-sm-1">
-                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle img-fluid" width="50" height="50">
                                             </div>
                                         </div>
                                     </div>
@@ -92,7 +92,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-sm-1">
-                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                                <img :src="renderAvatar(message.avatar)" alt="Avatar" class="rounded-circle img-fluid" width="50" height="50">
                                             </div>
                                             <div class="col-sm-11">
                                                 <span>{{message.message}}</span>

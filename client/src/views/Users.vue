@@ -49,7 +49,7 @@
                     <tbody>
                         <tr v-for="(user, index) in users" :key="user._id">
                             <th scope="row">{{++index}}</th>
-                            <td><img :src="renderAvatar(user.avatar)" alt="Avatar" class="rounded-circle" width="20" height="20"></td>
+                            <td><img :src="renderAvatar(user.avatar)" alt="Avatar" class="rounded-circle img-fluid" width="20" height="20"></td>
                             <td>{{user.username}}</td>
                             <td>{{user.email}}</td>
                             <td>{{user.firstName + " " + user.lastName}}</td>

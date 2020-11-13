@@ -41,7 +41,7 @@
                             <div class="form-group col-md-4">
                                 <div class="avatarDiv">
                                     <div id="previewAvatar">
-                                        <img :src="renderAvatar()" alt="Avatar" class="rounded-circle" width="100" height="100">
+                                        <img :src="renderAvatar()" alt="Avatar" class="rounded-circle img-fluid" width="100" height="100">
                                     </div>
                                     <div class="avatarWrapper">
                                         <button class="avatarUpload" :class="{'errorField' : avatarError && userSubmitting}">Upload avatar <i class="fas fa-upload"></i></button>
@@ -271,7 +271,7 @@
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         var previewAvatar = document.getElementById("previewAvatar");
-                        previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
+                        previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle img-fluid' width='100' height='100'></div><div>" + file.name + "</div>";
                     }
                     this.user.avatar = file;
                     this.clearAvatarStatus();

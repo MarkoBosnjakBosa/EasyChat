@@ -6,7 +6,7 @@
 				<div class="form-group col-md-4">
 					<div class="avatarDiv">
 						<div id="previewAvatar">
-							<img src="../assets/defaultAvatar.jpg" alt="Avatar" class="rounded-circle" width="100" height="100">
+							<img src="../assets/defaultAvatar.jpg" alt="Avatar" class="rounded-circle img-fluid" width="100" height="100">
 						</div>
 						<div class="avatarWrapper">
 							<button class="avatarUpload" :class="{'errorField' : avatarError && submitting}">Upload avatar <i class="fas fa-upload"></i></button>
@@ -140,7 +140,7 @@
 						this.$refs.first.focus();
 						this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: ""};
 						document.getElementById("avatar").value = "";
-						document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle' width='100' height='100'>";
+						document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle img-fluid' width='100' height='100'>";
 						this.alreadyExists = "";
 						this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.submitting = false;
 					} else {
@@ -179,7 +179,7 @@
 					var reader = new FileReader();
 					reader.onload = function(e) {
 						var previewAvatar = document.getElementById("previewAvatar");
-						previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle' width='100' height='100'></div><div>" + file.name + "</div>";
+						previewAvatar.innerHTML = "<div><img src='" + e.target.result + "' alt='" + file.name + "' class='rounded-circle img-fluid' width='100' height='100'></div><div>" + file.name + "</div>";
 					}
 					this.user.avatar = file;
 					this.clearAvatarStatus();
@@ -209,7 +209,7 @@
 			resetForm() {
 				this.user = {username: "", email: "", password: "", firstName: "", lastName: "", avatar: ""};
 				document.getElementById("avatar").value = "";
-				document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle' width='100' height='100'>";
+				document.getElementById("previewAvatar").innerHTML = "<img src='" + require("../assets/defaultAvatar.jpg") + "' alt='Avatar' class='rounded-circle img-fluid' width='100' height='100'>";
 				this.alreadyExists = "";
 				this.usernameError = false, this.emailError = false, this.passwordError = false, this.firstNameError = false, this.lastNameError = false, this.avatarError = false, this.userCreated = false, this.submitting = false;
 			}
