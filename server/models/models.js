@@ -1,5 +1,5 @@
 module.exports = function(mongoose) {
-	var userScheme = new mongoose.Schema({
+	const userScheme = new mongoose.Schema({
 		username: String,
 		email: String,
 		password: String,
@@ -10,21 +10,21 @@ module.exports = function(mongoose) {
 		accepted: Boolean,
 		isAdmin: Boolean
 	});
-	var chatroomScheme = new mongoose.Schema({
+	const chatroomScheme = new mongoose.Schema({
 		name: String,
 		icon: String,
 		type: String,
 		participants: Array,
 		blockedParticipants: Array
 	});
-	var messageScheme = new mongoose.Schema({
+	const messageScheme = new mongoose.Schema({
 		chatroomId: String,
 		username: String,
 		avatar: {name: String, contentType: String, image: Buffer},
 		message: String,
 		date: String
 	});
-	var models = {
+	const models = {
 		User: mongoose.model("User", userScheme),
 		Chatroom: mongoose.model("Chatroom", chatroomScheme),
 		Message: mongoose.model("Message", messageScheme)
