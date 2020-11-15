@@ -3,8 +3,8 @@
 		<form autocomplete="off" @submit.prevent="loginUser()">
 			<h1>Login</h1>
 			<div class="form-group">
-				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-				<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
+				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+				<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
