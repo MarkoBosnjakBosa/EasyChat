@@ -3,14 +3,14 @@
 		<form autocomplete="off" @submit.prevent="loginUser()">
 			<h1>Login</h1>
 			<div class="form-group">
-				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
-				<small v-if="usernameError" class="form-text errorInput">Please provide a valid username!</small>
+				<input type="text" id="username" class="form-control" :class="{'errorField' : usernameError && submitting}" placeholder="Username" v-model="user.username" @keyup="checkUsername()" @change="checkUsername()" @input="checkUsername()"/>
+				<small v-if="usernameError && submitting" class="form-text errorInput">Please provide a valid username!</small>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
 					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 					<div class="input-group-append">
-						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword"><i id="togglePassword" class="fa fa-eye"></i></button>
+						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 					</div>
 				</div>
 				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
@@ -20,7 +20,7 @@
 				<br/>
 				<a href="#" @click="forgotUsername()">Forgot username?</a>
 			</div>
-			<div v-if="passwordMatch" class="form-group loginFailed">Password does not match!</div>
+			<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
 			<div class="form-group submitDiv">
 				<button type="submit" class="btn btn-primary submitButton">Log in</button>
 			</div>
@@ -47,7 +47,7 @@
 					username: "",
 					password: ""
 				},
-				passwordMatch: false
+				noPasswordMatch: false
 			}
 		},
 		methods: {
@@ -88,14 +88,14 @@
 					allowSubmit = false;
 				}
 				if(!allowSubmit) {
-					this.passwordMatch = false;
+					this.noPasswordMatch = false;
 					return;
 				}
 				var body = {username: this.user.username, password: this.user.password};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/login", body).then(response => {
 					if(response.data.valid) {
 						this.user = {username: "", password: ""};
-						this.usernameError = false, this.passwordError = false, this.passwordMatch = false, this.submitting = false;
+						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
 						const token = response.data.token;
 						const user = response.data.user;
 						this.$store.dispatch("login", {token, user});
@@ -106,12 +106,12 @@
 						}
 					} else {
 						if(response.data.allowed) {
-							this.passwordMatch = true;
+							this.noPasswordMatch = true;
 						} else {
 							var errorFields = response.data.errorFields;
 							if(errorFields.includes("username")) this.usernameError = true;
 							if(errorFields.includes("password")) this.passwordError = true;
-							this.passwordMatch = false;
+							this.noPasswordMatch = false;
 						}
 					}
 				}).catch(error => console.log(error));

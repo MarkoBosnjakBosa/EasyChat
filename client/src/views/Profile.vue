@@ -34,7 +34,7 @@
                         </ul>
                     </div>
                 </nav>
-                <div class="personalInformation">
+                <div id="personalInformation">
                     <form autocomplete="off" @submit.prevent="editUser()" enctype="multipart/form-data">
                         <h1>Personal information:</h1>
                         <div class="form-row">
@@ -362,7 +362,7 @@
 </script>
 
 <style scoped>
-    .personalInformation {
+    #personalInformation {
         margin: 0 auto;
         max-width: 800px;
     }

@@ -39,6 +39,7 @@ module.exports = function(app, jwt, bcryptjs, models) {
 						bcryptjs.compare(password, user.password, function(error, foundPassword) {
 							if(foundPassword) {
 								const token = jwt.sign({userId: user._id, username: user.username}, "newSecretKey", {expiresIn: "2h"});
+								user.password = null;
 								response.status(200).json({valid: true, token: token, user: user});
 								response.end();
 							} else {
