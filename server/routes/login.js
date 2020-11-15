@@ -69,7 +69,7 @@ module.exports = function(app, jwt, bcryptjs, models) {
 			const decoded = jwt.verify(token, "newSecretKey");
 			request.userData = decoded;
 			response.status(200).json({loggedIn: true});
-		} catch (error){
+		} catch (error) {
 			response.status(401).json({loggedIn: false});
 		}
 	});
