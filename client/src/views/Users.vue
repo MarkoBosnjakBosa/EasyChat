@@ -1,14 +1,14 @@
 <template>
     <div id="profile" class="container-fluid">
         <div class="d-flex" id="barsDiv">
-            <div class="bg-light border-right" id="sidebarDiv">
-            <div class="heading">EasyChat</div>
-            <ul class="list list-group-flush">
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
-                <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
-                <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
-                <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom" @click="openChatroom(privateChatroom._id)"><div class="privateChatroomName">{{privateChatroom.name}}</div></li>
-            </ul>
+            <div id="sidebarDiv" class="bg-light border-right">
+                <div class="heading">EasyChat</div>
+                <ul class="list list-group-flush">
+                    <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Chatrooms</div><i v-if="publicChatrooms.length" id="publicIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('public')"></i></li>
+                    <li v-for="publicChatroom in publicChatrooms" :key="publicChatroom._id" class="list-group-item list-group-item-action bg-light publicChatroom" @click="openChatroom(publicChatroom._id)"><div class="chatroomIcon"><i :class="publicChatroom.icon"></i></div>{{publicChatroom.name}}</li>
+                    <li class="list-group-item list-group-item-action bg-light"><div class="chatroomType">Private</div><i v-if="privateChatrooms.length" id="privateIcon" class="fas fa-angle-double-up" @click="toggleChatrooms('private')"></i></li>
+                    <li v-for="privateChatroom in privateChatrooms" :key="privateChatroom._id" class="list-group-item list-group-item-action bg-light privateChatroom" @click="openChatroom(privateChatroom._id)"><div class="privateChatroomName">{{privateChatroom.name}}</div></li>
+                </ul>
             </div>
             <div id="pageDiv">
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
