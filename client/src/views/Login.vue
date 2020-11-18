@@ -16,9 +16,7 @@
 				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 			</div>
 			<div class="form-group forgotCredentials">
-				<a href="#" @click="forgotPassword()">Forgot password?</a>
-				<br/>
-				<a href="#" @click="forgotUsername()">Forgot username?</a>
+				Forgot <a href="#" @click="forgotPassword()">password</a> / <a href="#" @click="forgotUsername()">username</a>?
 			</div>
 			<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
 			<div class="form-group submitDiv">
