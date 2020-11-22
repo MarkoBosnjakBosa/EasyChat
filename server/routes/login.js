@@ -1,6 +1,6 @@
 module.exports = function(app, jwt, bcryptjs, models) {
-  	const User = models.User;
-  	app.post("/checkUsername", (request, response) => {
+	const User = models.User;
+	app.post("/checkUsername", (request, response) => {
    		var username = request.body.username;
    		if(username) {
 			var query = {username: username};
