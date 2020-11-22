@@ -172,14 +172,9 @@
                 this.socket.emit("loggedIn", this.chatroomId, this.username);
                 this.socket.on("userJoined", data => {
                     this.messages = data.messages;
-                    var users = data.users;
-                    var onlineUsers = Object.keys(users).reduce((object, key) => {
-                        if(users[key] != this.username) object[key] = users[key];
-                        return object;
-                    }, {});
-                    this.onlineUsers = onlineUsers;
+                    this.onlineUsers = data.users;
                     this.currentChatroom = data.currentChatroom;
-                    //this.socket.emit("newUser", this.chatroomId, this.username);
+                    this.socket.emit("newUser", this.chatroomId, this.username);
                 });
                 this.listen();
             },

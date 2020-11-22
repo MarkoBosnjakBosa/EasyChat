@@ -11,7 +11,7 @@ module.exports = function(io, models, async, moment) {
     });
 
     io.on("connection", socket => {
-        socket.on("loggedIn", (chatroomId, username) => {
+        socket.on("userJoining", (chatroomId, username) => {
             var queries = [];
             var messageQuery = {chatroomId: chatroomId};
             queries.push(function(callback) {
@@ -44,12 +44,7 @@ module.exports = function(io, models, async, moment) {
                 if(!chatrooms.hasOwnProperty(chatroomId)) {
                     chatrooms[chatroomId] = {users: {}};
                 }
-                socket.join(chatroomId);
-                chatrooms[chatroomId].users[socket.id] = username;
-                var user = {socketId: socket.id, username: username};
-                console.log(chatrooms);
                 socket.emit("userJoined", {messages: messageResults, users: chatrooms[chatroomId].users, currentChatroom: currentChatroom});
-                socket.to(chatroomId).broadcast.emit("userOnline", user);
             });
         });
         socket.on("newUser", (chatroomId, username) => {
