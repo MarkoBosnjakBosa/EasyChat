@@ -16,8 +16,8 @@ module.exports = function(app, jwt, bcryptjs, models) {
 		} else {
 			response.status(200).json({exists: false, empty: true});
 			response.end();
-			}
-		});
+		}
+	});
  	app.post("/login", (request, response) => {
 		var allowLogin = true;
 		var errorFields = [];
