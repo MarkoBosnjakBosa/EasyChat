@@ -100,11 +100,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError && privateSubmitting}" v-model="availableUser" @focus="clearAvailableUserStatus()" @keypress="clearAvailableUserStatus()">
+                                <select id="availableUser" class="form-control" :class="{'errorField' : availableUserError}" v-model="availableUser" @focus="clearAvailableUserStatus()" @keypress="clearAvailableUserStatus()">
                                     <option value="" disabled selected>Select user...</option>
                                     <option v-for="availableUser in availableUsers" :key="availableUser" :value="availableUser">{{availableUser}}</option>
                                 </select>
-                                <small v-if="availableUserError && privateSubmitting" class="form-text errorInput">Please provide a valid user!</small>
+                                <small v-if="availableUserError" class="form-text errorInput">Please provide a valid user!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Create</button>
@@ -145,7 +145,6 @@
                 },
                 publicChatroomCreated: false,
                 editing: null,
-                privateSubmitting: false,
                 availableUserError: false,
                 availableUser: "",
                 privateChatroomCreated: false
@@ -254,7 +253,6 @@
                 }).catch(error => console.log(error));
             },
             createPrivateChatroom() {
-                this.privateSubmitting = true;
                 this.clearAvailableUserStatus();
                 if(this.invalidAvailableUser) {
                     this.availableUserError = true;
@@ -268,7 +266,7 @@
                         this.privateChatrooms = [...this.privateChatrooms, newPrivateChatroom];
                         this.privateChatroomCreated = true;
                         this.availableUser = "";
-                        this.availableUserError = false, this.privateSubmitting = false;
+                        this.availableUserError = false;
                         this.getAvailableUsers();
                     } else {
                         var errorFields = response.data.errorFields;

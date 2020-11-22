@@ -37,11 +37,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-3"></div>
                             <div class="form-group col-md-4">
-                                <select id="availableChatroom" class="form-control" :class="{'errorField' : availableChatroomError && publicSubmitting}" v-model="availableChatroom" @focus="clearAvailableChatroomStatus()" @keypress="clearAvailableChatroomStatus()">
+                                <select id="availableChatroom" class="form-control" :class="{'errorField' : availableChatroomError}" v-model="availableChatroom" @focus="clearAvailableChatroomStatus()" @keypress="clearAvailableChatroomStatus()">
                                     <option value="" disabled selected>Select chatroom...</option>
                                     <option v-for="availableChatroom in availableChatrooms" :key="availableChatroom._id" :value="availableChatroom._id">{{availableChatroom.name}}</option>
                                 </select>
-                                <small v-if="availableChatroomError && publicSubmitting" class="form-text errorInput">Please provide a valid chatroom!</small>
+                                <small v-if="availableChatroomError" class="form-text errorInput">Please provide a valid chatroom!</small>
                             </div>
                             <div class="form-group col-md-1">
                                 <button type="submit" class="btn btn-primary">Join</button>
@@ -99,7 +99,6 @@
                 privateChatrooms: [],
                 availableChatrooms: [],
                 availableUsers: [],
-                publicSubmitting: false,
                 availableChatroomError: false,
                 availableChatroom: "",
                 publicChatroomJoined: false,
@@ -112,7 +111,7 @@
         methods: {
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
-                this.username = this.$store.getters.getUser.username;
+                this.username = this.$store.getters.getUser;
                 this.checkStatus();
             },
             getChatrooms() {
@@ -132,7 +131,6 @@
                 }).catch(error => console.log(error));
             },
             joinAvailableChatroom() {
-                this.publicSubmitting = true;
                 this.clearAvailableChatroomStatus();
                 if(this.invalidAvailableChatroom) {
                     this.availableChatroomError = true;
@@ -146,7 +144,7 @@
                         this.publicChatrooms = [...this.publicChatrooms, newAvailableChatroom];
                         this.publicChatroomJoined = true;
                         this.availableChatroom = "";
-                        this.availableChatroomError = false, this.publicSubmitting = false;
+                        this.availableChatroomError = false;
                         this.getAvailableChatrooms();
                     } else {
                         var errorFields = response.data.errorFields;
