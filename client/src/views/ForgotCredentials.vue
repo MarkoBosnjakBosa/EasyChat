@@ -99,10 +99,10 @@
         max-width: 400px;
     }
     h1 {
-		text-align: center;
-		margin-top: 20px;
-		margin-bottom: 20px;
-	}
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
     .emailDiv, .submitDiv, .loginDiv {
         text-align: center;
     }
