@@ -85,7 +85,8 @@
 						this.usernameError = false, this.passwordError = false, this.noPasswordMatch = false, this.submitting = false;
 						const token = response.data.token;
 						const user = response.data.user;
-						this.$store.dispatch("login", {token, user});
+						const isAdmin = response.data.isAdmin;
+						this.$store.dispatch("login", {token, user, isAdmin});
 						if(user.isAdmin) {
 							this.$router.push("/admin/overview");
 						} else {

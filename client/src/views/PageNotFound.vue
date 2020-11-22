@@ -2,7 +2,7 @@
     <div id="overview" class="container-fluid">
         <div class="container pageNotFoundDiv">
             <div class="alert alert-danger" role="alert">Page not found!</div>
-            <a href="#" class="btn btn-info" role="button" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+            <button type="button" class="btn btn-info" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
         </div>
     </div>
 </template>

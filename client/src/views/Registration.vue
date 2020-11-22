@@ -52,7 +52,7 @@
 						<button type="button" class="btn btn-danger resetForm" @click="resetForm()">Reset</button>
 					</div>
 					<div class="form-group">
-						<a href="#" class="btn btn-info" role="button" @click="login">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+						<button type="button" class="btn btn-info" @click="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
 					</div>
 				</div>
 			</div>

@@ -140,8 +140,8 @@
         methods: {
             isLoggedIn() {
                 if(!this.$store.getters.isLoggedIn) this.$router.push("/login");
-                this.username = this.$store.getters.getUser.username;
-                this.isAdmin = this.$store.getters.getUser.isAdmin;
+                this.username = this.$store.getters.getUser;
+                this.isAdmin = this.$store.getters.isAdmin;
                 this.checkStatus();
             },
             getChatrooms() {
