@@ -1,8 +1,8 @@
 module.exports = function(app, jwt, bcryptjs, models) {
 	const User = models.User;
 	app.post("/checkUsername", (request, response) => {
-   		var username = request.body.username;
-   		if(username) {
+		var username = request.body.username;
+		if(username) {
 			var query = {username: username};
 			User.findOne(query).then(user => {
 				if(!isEmpty(user)) {
@@ -16,8 +16,8 @@ module.exports = function(app, jwt, bcryptjs, models) {
 		} else {
 			response.status(200).json({exists: false, empty: true});
 			response.end();
-		}
- 	});
+			}
+		});
  	app.post("/login", (request, response) => {
 		var allowLogin = true;
 		var errorFields = [];
@@ -89,7 +89,7 @@ module.exports = function(app, jwt, bcryptjs, models) {
 			return true;
 		}
  	}
- 	function isEmpty(object) {
-   		return !object || Object.keys(object).length === 0;
- 	}
+	function isEmpty(object) {
+		return !object || Object.keys(object).length === 0;
+	}
 }
