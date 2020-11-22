@@ -87,7 +87,7 @@
 						const user = response.data.user;
 						const isAdmin = response.data.isAdmin;
 						this.$store.dispatch("login", {token, user, isAdmin});
-						if(user.isAdmin) {
+						if(isAdmin) {
 							this.$router.push("/admin/overview");
 						} else {
 							this.$router.push("/overview");

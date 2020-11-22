@@ -82,7 +82,9 @@
                             </div>
                         </div>
                     </form>
-                    <form class="resetPassword" autocomplete="off" @submit.prevent="resetPassword()">
+                </div>
+                <div id="resetPassword">
+                    <form autocomplete="off" @submit.prevent="resetPassword()">
                         <h1>Reset password:</h1>
                         <div class="form-group">
                             <div class="input-group">
@@ -131,7 +133,6 @@
                     sendNewsletters: false
                 },
                 userEdited: false,
-                passwordSubmitting: false,
                 passwordError: false,
                 password: "",
                 passwordReset: false
@@ -204,7 +205,6 @@
                 }).catch(error => console.log(error));
             },
             resetPassword() {
-                this.passwordSubmitting = true;
                 this.clearPasswordStatus();
                 if(this.invalidPassword) {
                     this.passwordError = true;
@@ -216,7 +216,7 @@
                     if(response.data.reset) {
                         this.passwordReset = true;
                         this.password = "";
-                        this.passwordError = false, this.passwordSubmitting = false;
+                        this.passwordError = false;
                     } else {
                         this.passwordError = true;
                         this.passwordReset = false;
@@ -366,7 +366,7 @@
         margin: 0 auto;
         max-width: 800px;
     }
-    .resetPassword {
+    #resetPassword {
         margin: 0 auto;
         max-width: 400px;
     }
