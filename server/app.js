@@ -25,6 +25,7 @@ const resetPasswordUrl = process.env.RESET_PASSWORD_URL;
 const transporter = getTransporter();
 app.use(cors({origin: "*"}));
 app.use(express.json());
+app.use("/favicon", express.static("favicon"));
 app.set("views", __dirname + "/views");
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");

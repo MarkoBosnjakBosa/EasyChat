@@ -80,7 +80,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 						bcryptjs.hash(newUser.password, salt, (error, hash) => {
 							newUser.password = hash;
 							newUser.save().then(user => {
-								sendConfirmationEmail(user.email, user.firstName, user.username);
+								sendConfirmationEmail(user.email, user.firstName, user.username, acceptanceToken);
 								response.status(200).json({created: true});
 								response.end();
 							}).catch(error => console.log(error));
@@ -100,9 +100,9 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		var update = {accepted: true};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!isEmpty(user)) {
-				response.render("registration.html", {confirmed: true, loginUrl: loginUrl});
+				response.render("registration.html", {confirmed: true, loginUrl: loginUrl, baseUrl, port});
 			} else {
-				response.render("registration.html", {confirmed: false, adminEmail: emailUser});
+				response.render("registration.html", {confirmed: false, adminEmail: emailUser, baseUrl, port});
 			}
 		}).catch(error => console.log(error));
 	});
@@ -110,7 +110,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 	function getUserScheme(User, username, email, password, firstName, lastName, avatar, sendNewsletters, accepted, acceptanceToken, isAdmin) {
 		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, sendNewsletters: sendNewsletters, accepted: accepted, acceptanceToken: acceptanceToken, isAdmin: isAdmin});
 	}
-	function sendConfirmationEmail(email, firstName, username) {
+	function sendConfirmationEmail(email, firstName, username, acceptanceToken) {
 		var mailOptions = {
 			from: emailUser,
 			to: email,
