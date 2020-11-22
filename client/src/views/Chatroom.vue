@@ -169,7 +169,7 @@
                 }).catch(error => console.log(error));
             },
             joinChatroom() {
-                this.socket.emit("loggedIn", this.chatroomId, this.username);
+                this.socket.emit("userJoining", this.chatroomId, this.username);
                 this.socket.on("userJoined", data => {
                     this.messages = data.messages;
                     this.onlineUsers = data.users;
