@@ -19,17 +19,20 @@
                     </button>
                     <div id="navbarOptions" class="collapse navbar-collapse">
                         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#" @click="openOverview()">Overview</a>
+                            <li v-if="isAdmin" class="nav-item">
+                                <a class="nav-link" :href="baseUrl + '/admin/overview'">Overview</a>
+                            </li>
+                            <li v-else class="nav-item">
+                                <a class="nav-link" :href="baseUrl + '/overview'">Overview</a>
                             </li>
                             <li v-if="isAdmin" class="nav-item">
-                                <a class="nav-link" href="#" @click="openUsers()">Users</a>
+                                <a class="nav-link" :href="baseUrl + '/admin/users'">Users</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="userOptions" href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{username}}</a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userOptions">
-                                    <a class="dropdown-item" href="#" @click="openProfile()">Profile</a>
-                                    <a class="dropdown-item" href="#" @click="logout()">Log out</a>
+                                    <a class="dropdown-item" :href="baseUrl + '/profile'">Profile</a>
+                                    <a class="dropdown-item" :href="baseUrl + '/login'" @click="logout()">Log out</a>
                                 </div>
                             </li>
                         </ul>
@@ -105,7 +108,7 @@
                             <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage()">
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError && submitting}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
+                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
                                     </div>
                                     <div class="form-group col-md-1">
                                         <button type="submit" class="btn btn-primary">Send</button>
@@ -147,7 +150,6 @@
                 editing: null,
                 onlineUsers: {},
                 currentChatroom: "",
-                submitting: false,
                 newMessageError: false,
                 newMessage: "",
                 typing: "",
@@ -191,7 +193,6 @@
                 this.socket.on("stopTyping", () => this.typing = "");
             },
             sendMessage() {
-                this.submitting = true;
                 this.clearNewMessageStatus();
                 if(this.invalidNewMessage) {
                     this.newMessageError = true;
@@ -200,7 +201,7 @@
                 this.socket.emit("newMessage", this.chatroomId, this.newMessage);
                 this.$refs.first.focus();
                 this.newMessage = "";
-                this.newMessageError = false, this.submitting = false;
+                this.newMessageError = false;
             },
             enableEditing(message) {
                 this.cachedMessage = Object.assign({}, message);
@@ -254,24 +255,8 @@
                     }
                 }).catch(error => console.log(error));
             },
-            openOverview() {
-                if(this.isAdmin) {
-                    this.$router.push("/admin/overview");
-                } else {
-                    this.$router.push("/overview");
-                }
-            },
-            openUsers() {
-                if(this.isAdmin) {
-                    this.$router.push("/admin/users");
-                }
-            },
-            openProfile() {
-                this.$router.push("/profile");
-            },
             logout() {
                 this.$store.dispatch("logout");
-                this.$router.push("/login");
             },
             clearNewMessageStatus() { this.newMessageError = false; },
             toggleChatrooms(type) {
