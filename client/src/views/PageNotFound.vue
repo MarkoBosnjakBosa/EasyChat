@@ -15,6 +15,7 @@
         name: "pageNotFound",
         methods: {
             login() {
+                this.$store.dispatch("logout");
                 this.$router.push("/login");
             }
         }
