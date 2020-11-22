@@ -79,6 +79,6 @@ module.exports = function(app, models, multer, fs, path) {
     });
 
     function isEmpty(object) {
-		return !object || Object.keys(object).length === 0;
-	}
+        return !object || Object.keys(object).length === 0;
+    }
 }
