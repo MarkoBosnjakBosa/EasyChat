@@ -4,19 +4,19 @@
 			<h1>Reset password</h1>
 			<div class="form-group">
 				<div class="input-group">
-					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError && submitting}" placeholder="Password" v-model="user.password" ref="first" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
+					<input type="password" id="password" class="form-control" :class="{'errorField' : passwordError}" placeholder="Password" v-model="user.password" ref="first" @focus="clearPasswordStatus()" @keypress="clearPasswordStatus()"/>
 					<div class="input-group-append">
-						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError && submitting}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
+						<button type="button" class="btn btn-light" :class="{'errorIcon' : passwordError}" data-toggle="tooltip" title="Password has to have at least 8 characters, one upper and lower case, one digit and a special character." @click="togglePassword()"><i id="togglePassword" class="fa fa-eye"></i></button>
 					</div>
 				</div>
-				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
+				<small v-if="passwordError" class="form-text errorInput">Please provide a valid password!</small>
 			</div>
 			<div v-if="passwordReset" class="passwordResetSuccessful">Your password has been successfully reset!</div>
 			<div class="form-group">
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</div>
 			<div class="form-group">
-				<a href="#" class="btn btn-info" role="button" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></a>
+				<button type="button" class="btn btn-info" @click.prevent="login()">Proceed to login <i class="fas fa-hand-point-right"></i></button>
 			</div>
 		</form>
 	</div>
@@ -31,39 +31,38 @@
 		name: "resetPassword",
 		data() {
 			return {
-				submitting: false,
 				passwordError: false,
 				user: {
 					username: "",
+					acceptanceToken: "",
 					password: ""
 				},
 				passwordReset: false
 			}
 		},
 		methods: {
-			login() {
-				this.$router.push({name: "Login"});
-			},
 			resetPassword() {
-				this.submitting = true;
 				this.clearPasswordStatus();
 				if(this.invalidPassword) {
 					this.passwordError = true;
 					this.passwordReset = false;
 					return;
 				}
-				var body = {username: this.user.username, password: this.user.password};
+				var body = {username: this.user.username, acceptanceToken: this.user.acceptanceToken, password: this.user.password};
 				axios.put(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/resetPassword", body).then(response => {
 					if(response.data.reset) {
 						this.passwordReset = true;
 						this.$refs.first.focus();
 						this.user.password = "";
-						this.passwordError = false, this.submitting = false;
+						this.passwordError = false;
 					} else {
 						this.passwordError = true;
 						this.passwordReset = false;
 					}
 				}).catch(error => console.log(error));
+			},
+			login() {
+				this.$router.push("/login");
 			},
 			clearPasswordStatus() { this.passwordError = false; },
 			togglePassword() {
@@ -95,7 +94,8 @@
 			}
 		},
 		created() {
-			this.user.username = this.$route.params.username;
+			this.user.username = this.$route.query.username;
+			this.user.acceptanceToken = this.$route.query.acceptanceToken;
 		}
 	}
 </script>
