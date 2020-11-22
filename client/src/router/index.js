@@ -1,9 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Registration from "../views/Registration.vue";
 import Login from "../views/Login.vue";
-import ForgotPassword from "../views/ForgotPassword.vue";
+import ForgotCredentials from "../views/ForgotCredentials.vue";
 import ResetPassword from "../views/ResetPassword.vue";
-import ForgotUsername from "../views/ForgotUsername.vue";
 import AdminOverview from "../views/AdminOverview.vue";
 import Overview from "../views/Overview.vue";
 import Chatroom from "../views/Chatroom.vue";
@@ -23,19 +22,14 @@ const routes = [
 		component: Login
 	},
 	{
-		path: "/forgot/password",
-		name: "ForgotPassword",
-		component: ForgotPassword
+		path: "/forgot/credentials",
+		name: "ForgotCredentials",
+		component: ForgotCredentials
 	},
 	{
 		path: "/reset/password/:username",
 		name: "ResetPassword",
 		component: ResetPassword
-	},
-	{
-		path: "/forgot/username",
-		name: "ForgotUsername",
-		component: ForgotUsername
 	},
 	{
 		path: "/admin/overview",

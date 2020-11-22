@@ -70,16 +70,17 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 				} else {
 					var sendNewsletters = true;
 					var accepted = false;
+					var acceptanceToken = Math.floor((Math.random() * 100) + 54);
 					var isAdmin = false;
 					var avatarImage = fs.readFileSync(avatar.path);
 					var encodedAvatarImage = avatarImage.toString("base64");
 					var avatarObject = {name: avatar.filename, contentType: avatar.mimetype, image: Buffer.from(encodedAvatarImage, "base64")};
-					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, sendNewsletters, accepted, isAdmin);
+					var newUser = getUserScheme(User, username, email, password, firstName, lastName, avatarObject, sendNewsletters, accepted, acceptanceToken, isAdmin);
 					bcryptjs.genSalt(10, (error, salt) => {
 						bcryptjs.hash(newUser.password, salt, (error, hash) => {
 							newUser.password = hash;
 							newUser.save().then(user => {
-								sendConfirmationEmail(user.username, user.email, user.firstName);
+								sendConfirmationEmail(user.email, user.firstName, user.username);
 								response.status(200).json({created: true});
 								response.end();
 							}).catch(error => console.log(error));
@@ -92,9 +93,10 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 			response.end();
 		}
 	});
-	app.get("/confirm/registration/:username", (request, response) => {
-		var username = request.params.username;
-		var query = {username: username};
+	app.get("/confirm/registration", (request, response) => {
+		var username = request.query.username;
+		var acceptanceToken = request.query.acceptanceToken;
+		var query = {$and: [{username: username}, {acceptanceToken: acceptanceToken}]}; 
 		var update = {accepted: true};
 		User.findOneAndUpdate(query, update, {new: true}).then(user => {
 			if(!isEmpty(user)) {
@@ -105,10 +107,10 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 		}).catch(error => console.log(error));
 	});
 
-	function getUserScheme(User, username, email, password, firstName, lastName, avatar, sendNewsletters, accepted, isAdmin) {
-		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, sendNewsletters: sendNewsletters, accepted: accepted, isAdmin: isAdmin});
+	function getUserScheme(User, username, email, password, firstName, lastName, avatar, sendNewsletters, accepted, acceptanceToken, isAdmin) {
+		return new User({username: username, email: email, password: password, firstName: firstName, lastName: lastName, avatar: avatar, sendNewsletters: sendNewsletters, accepted: accepted, acceptanceToken: acceptanceToken, isAdmin: isAdmin});
 	}
-	function sendConfirmationEmail(username, email, firstName) {
+	function sendConfirmationEmail(email, firstName, username) {
 		var mailOptions = {
 			from: emailUser,
 			to: email,
@@ -117,7 +119,7 @@ module.exports = function(app, bcryptjs, models, multer, fs, transporter, emailU
 				"<body>" +
 				"<p>Dear <b>" + firstName + "</b>,</p>" +
 				"<p>thank you for using EasyChat. Click on the button below to proceed with your registration:" +
-				"<p style='margin-bottom: 30px;'><a href='" + baseUrl + port + "/confirm/registration/" + username + "' target='_blank' style=' background-color: #1a1aff; border: none; color: #fff; padding: 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius:5px;'>Confirm registration</a></p>" +
+				"<p style='margin-bottom: 30px;'><a href='" + baseUrl + port + "/confirm/registration/?username=" + username + "&acceptanceToken=" + acceptanceToken + "' target='_blank' style=' background-color: #1a1aff; border: none; color: #fff; padding: 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius:5px;'>Confirm registration</a></p>" +
 				"<p>Kind regards,<br/> your Admin Team</p>" +
 				"</body>" +
 				"</html>"

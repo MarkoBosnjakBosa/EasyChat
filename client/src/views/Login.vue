@@ -15,16 +15,14 @@
 				</div>
 				<small v-if="passwordError && submitting" class="form-text errorInput">Please provide a valid password!</small>
 			</div>
-			<div class="form-group forgotCredentials">
-				Forgot <a href="#" @click="forgotPassword()">password</a> / <a href="#" @click="forgotUsername()">username</a>?
+			<div class="form-group forgotCredentialsDiv">
+				<a href="#" @click="forgotCredentials()">Forgot credentials?</a>
 			</div>
 			<div v-if="noPasswordMatch" class="form-group loginFailed">Password does not match!</div>
 			<div class="form-group submitDiv">
 				<button type="submit" class="btn btn-primary submitButton">Log in</button>
 			</div>
-			<div class="form-group registerDiv">
-				Not a member? <a href="#" @click="register()">Register</a>
-			</div>
+			<div class="form-group registerDiv">Not a member? <a href="#" @click="register()">Register</a></div>
 		</form>
 	</div>
 </template>
@@ -49,15 +47,6 @@
 			}
 		},
 		methods: {
-			forgotPassword() {
-				this.$router.push("/forgot/password");
-			},
-			forgotUsername() {
-				this.$router.push("/forgot/username");
-			},
-			register() {
-				this.$router.push("/registration");
-			},
 			checkUsername() {
 				var body = {username: this.user.username};
 				axios.post(process.env.VUE_APP_BASE_URL + process.env.VUE_APP_SERVER_PORT + "/checkUsername", body).then(response => {
@@ -114,6 +103,12 @@
 					}
 				}).catch(error => console.log(error));
 			},
+			forgotCredentials() {
+				this.$router.push("/forgot/credentials");
+			},
+			register() {
+				this.$router.push("/registration");
+			},
 			clearUsernameStatus() { this.usernameError = false; },
 			clearPasswordStatus() { this.passwordError = false; },
 			togglePassword() {
@@ -165,7 +160,7 @@
 		margin-top: 20px;
 		margin-bottom: 20px;
 	}
-	.forgotCredentials {
+	.forgotCredentialsDiv {
 		text-align: right;
 	}
 	.submitButton {

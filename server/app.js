@@ -31,7 +31,7 @@ app.set("view engine", "html");
 
 const registration = require("./routes/registration.js")(app, bcryptjs, models, multer, fs, transporter, emailUser, baseUrl, port, loginUrl);
 const login = require("./routes/login.js")(app, jwt, bcryptjs, models);
-const forgotPassword = require("./routes/forgotPassword.js")(app, bcryptjs, models, transporter, emailUser, resetPasswordUrl);
+const forgotCredentials = require("./routes/forgotCredentials.js")(app, bcryptjs, models, transporter, emailUser, baseUrl, port, resetPasswordUrl);
 const overview = require("./routes/overview.js")(app, models);
 const chatroom = require("./chatroom/chatroom.js")(io, models, async, moment);
 const users = require("./routes/users.js")(app, models, async, fs, path);
