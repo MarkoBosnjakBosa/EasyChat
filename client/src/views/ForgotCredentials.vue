@@ -39,7 +39,7 @@
 <script>
     import "bootstrap";
     import "bootstrap/dist/css/bootstrap.min.css";
-	var axios = require("axios");
+    var axios = require("axios");
 	
     export default {
         name: "forgotCredentials",
