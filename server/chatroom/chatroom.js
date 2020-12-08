@@ -49,9 +49,11 @@ module.exports = function(io, models, async, moment) {
         });
         socket.on("newUser", (chatroomId, username) => {
             socket.join(chatroomId);
-            chatrooms[chatroomId].users[socket.id] = username;
-            var user = {socketId: socket.id, username: username};
-            socket.to(chatroomId).broadcast.emit("userOnline", user);
+            if(!Object.values(chatrooms[chatroomId].users).includes(username)) {
+                chatrooms[chatroomId].users[socket.id] = username;
+                var user = {socketId: socket.id, username: username};
+                socket.to(chatroomId).broadcast.emit("userOnline", user);
+            }
         });
         socket.on("newMessage", (chatroomId, message) => {
             if(chatroomId && message) {

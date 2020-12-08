@@ -174,14 +174,18 @@
                 this.socket.emit("userJoining", this.chatroomId, this.username);
                 this.socket.on("userJoined", data => {
                     this.messages = data.messages;
-                    this.onlineUsers = data.users;
+                    this.onlineUsers = Object.fromEntries(Object.entries(data.users).filter(([socketId, username]) => username != this.username));
                     this.currentChatroom = data.currentChatroom;
                     this.socket.emit("newUser", this.chatroomId, this.username);
                 });
                 this.listen();
             },
             listen() {
-                this.socket.on("userOnline", user => this.onlineUsers[user.socketId] = user.username);
+                this.socket.on("userOnline", user => {
+                    if(user.username != this.username && !Object.values(this.onlineUsers).includes(user.username)) {
+                        this.onlineUsers[user.socketId] = user.username;
+                    }
+                });
                 this.socket.on("userOffline", socketId => delete this.onlineUsers[socketId]);
                 this.socket.on("newMessage", message => this.messages.push(message));
                 this.socket.on("editMessage", editedMessage => {
@@ -354,7 +358,7 @@
         padding-top: 10px;
     }
     .typing {
-        margin-bottom: 10px;
+        margin-left: 5px;
     }
     .onlineUsers {
         list-style-type: none;
