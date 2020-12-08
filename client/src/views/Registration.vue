@@ -171,7 +171,6 @@
 			clearLastNameStatus() { this.lastNameError = false; },
 			clearAvatarStatus() { this.avatarError = false; },
 			selectAvatar(event) {
-				this.submitting = false;
 				var files = event.target.files;
 				var allowedExtensions = ["image/png", "image/jpg", "image/jpeg"];
 				if(files && files.length && allowedExtensions.includes(files[0].type) && files[0].size <= 500000) {
@@ -186,7 +185,6 @@
 					reader.readAsDataURL(file);
 				} else {
 					this.avatarError = true;
-					this.submitting = true;
 				}
 			},
 			togglePassword() {
