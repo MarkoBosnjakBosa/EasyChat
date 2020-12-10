@@ -367,6 +367,9 @@
         margin-top: 20px;
         margin-bottom: 20px;
     }
+    .publicChatroom {
+        cursor: pointer;
+    }
     tbody .fas, tbody .far {
         cursor: pointer;
         margin-right: 5px;

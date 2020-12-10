@@ -31,7 +31,7 @@
     float: left;
     font-weight: bold;
 }
-.privateChatroomType {
+.publicChatroomType, .privateChatroomType {
     width: 90%;
     float: left;
     cursor: pointer;
@@ -45,14 +45,7 @@ li .fa-times {
     float: left;
     margin-left: 10px;
 }
-.leaveChatroomIcon {
-    width: 10%;
-    float: right;
-}
 .fas.fa-angle-double-up, .fas.fa-angle-double-down {
-    cursor: pointer;
-}
-.publicChatroom, .privateChatroomName {
     cursor: pointer;
 }
 .hiddenPublicChatroom, .hiddenPrivateChatroom {
