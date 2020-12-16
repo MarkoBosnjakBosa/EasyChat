@@ -184,7 +184,10 @@
                         this.onlineUsers[user.socketId] = user.username;
                     }
                 });
-                this.socket.on("userOffline", socketId => delete this.onlineUsers[socketId]);
+                this.socket.on("userOffline", socketId => {
+                    delete this.onlineUsers[socketId];
+                    this.typing = "";
+                });
                 this.socket.on("newMessage", message => this.messages.push(message));
                 this.socket.on("editMessage", editedMessage => {
                     this.messages = this.messages.map(message => message._id == editedMessage._id ? editedMessage : message);
