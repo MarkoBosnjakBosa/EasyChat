@@ -105,12 +105,10 @@
                                 </div>
                             </div>
                             <small v-if="typing" class="typing"><i><b>{{typing}}</b> is typing...</i></small>
-                            <form class="newMessage" autocomplete="off" @submit.prevent="sendMessage()">
-                                <div class="form-row">
-                                    <div class="form-group col-md-11">
-                                        <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
-                                    </div>
-                                    <div class="form-group col-md-1">
+                            <form autocomplete="off" @submit.prevent="sendMessage()">
+                                <div class="input-group mb-3">
+                                    <input type="text" id="newMessage" class="form-control" :class="{'errorField' : newMessageError}" placeholder="New message..." v-model="newMessage" ref="first" @focus="clearNewMessageStatus()" @keypress="clearNewMessageStatus()"/>
+                                    <div class="input-group-append">
                                         <button type="submit" class="btn btn-primary">Send</button>
                                     </div>
                                 </div>
